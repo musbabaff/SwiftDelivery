@@ -1,9 +1,9 @@
-# -===============================================================================¬
-# ¦                                                                               ¦
-# ¦                          V e l o D e l i v e r y                              ¦
-# ¦                    Profesyonel Teslimat Etkinlik Sistemi                      ¦
-# ¦                              Sürüm: 1.0.2                                     ¦
-# ¦                                                                               ¦
+# -===============================================================================ï¿½
+# ï¿½                                                                               ï¿½
+# ï¿½                          V e l o D e l i v e r y                              ï¿½
+# ï¿½                    Profesyonel Teslimat Etkinlik Sistemi                      ï¿½
+# ï¿½                              Sï¿½rï¿½m: 1.0.2                                     ï¿½
+# ï¿½                                                                               ï¿½
 # L===============================================================================-
 
 # ===============================================================================
@@ -11,21 +11,21 @@
 # ===============================================================================
 
 general:
-  # Dil dosyasý (lang klasöründe: tr.yml, en.yml)
+  # Dil dosyasï¿½ (lang klasï¿½rï¿½nde: tr.yml, en.yml)
   language: tr
   
   # Saat dilimi
   timezone: Europe/Istanbul
   
-  # Debug modu (konsola detaylý log)
+  # Debug modu (konsola detaylï¿½ log)
   debug: false
 
 # ===============================================================================
-# KATEGORÝ GÖRÜNEN ÝSÝMLERÝ
+# KATEGORï¿½ Gï¿½Rï¿½NEN ï¿½Sï¿½MLERï¿½
 # ===============================================================================
 
 category-display-names:
-  farm: "Çiftlik"
+  farm: "ï¿½iftlik"
   ore: "Maden"
   block: "Blok"
   food: "Yiyecek"
@@ -36,31 +36,31 @@ category-display-names:
   mob: "Mob Drop"
   dye: "Boya"
   tool: "Alet"
-  armor: "Zýrh"
-  combat: "Savaþ"
-  potion: "Ýksir"
+  armor: "Zï¿½rh"
+  combat: "Savaï¿½"
+  potion: "ï¿½ksir"
   decoration: "Dekorasyon"
-  redstone: "Kýzýltaþ"
-  misc: "Çeþitli"
+  redstone: "Kï¿½zï¿½ltaï¿½"
+  misc: "ï¿½eï¿½itli"
 
 # ===============================================================================
-# TESLÝMAT GÖRÜNEN ÝSÝMLERÝ
+# TESLï¿½MAT Gï¿½Rï¿½NEN ï¿½Sï¿½MLERï¿½
 # ===============================================================================
 
 delivery-display-names:
-  gunluk: "Günlük Teslimat"
-  maden: "Maden Teslimatý"
-  blok: "Blok Teslimatý"
-  elmas: "Elmas Teslimatý"
-  ciftlik: "Çiftlik Teslimatý"
-  buyuk-etkinlik: "Büyük Etkinlik"
+  gunluk: "Gï¿½nlï¿½k Teslimat"
+  maden: "Maden Teslimatï¿½"
+  blok: "Blok Teslimatï¿½"
+  elmas: "Elmas Teslimatï¿½"
+  ciftlik: "ï¿½iftlik Teslimatï¿½"
+  buyuk-etkinlik: "Bï¿½yï¿½k Etkinlik"
 
 # ===============================================================================
-# ETKÝNLÝK AYARLARI
+# ETKï¿½NLï¿½K AYARLARI
 # ===============================================================================
 
 events:
-  # Ayný anda maksimum aktif etkinlik
+  # Aynï¿½ anda maksimum aktif etkinlik
   max-concurrent: 5
   
   # Duyurular
@@ -74,7 +74,7 @@ events:
     start: "ENTITY_PLAYER_LEVELUP"
     end: "UI_TOAST_CHALLENGE_COMPLETE"
   
-  # Title gösterimi
+  # Title gï¿½sterimi
   title:
     enabled: true
     fade-in: 10
@@ -85,13 +85,13 @@ events:
 # WEBHOOK (Discord)
 # ===============================================================================
 # 
-# Discord webhook entegrasyonu ile etkinlik baþlangýç ve bitiþ bildirimlerini
-# Discord sunucunuza otomatik olarak gönderin.
+# Discord webhook entegrasyonu ile etkinlik baï¿½langï¿½ï¿½ ve bitiï¿½ bildirimlerini
+# Discord sunucunuza otomatik olarak gï¿½nderin.
 #
-# Webhook URL nasýl alýnýr:
-# 1. Discord sunucunuzda bir kanal seçin
-# 2. Kanal Ayarlarý > Entegrasyonlar > Webhooks
-# 3. "Yeni Webhook" oluþturun ve URL'yi kopyalayýn
+# Webhook URL nasï¿½l alï¿½nï¿½r:
+# 1. Discord sunucunuzda bir kanal seï¿½in
+# 2. Kanal Ayarlarï¿½ > Entegrasyonlar > Webhooks
+# 3. "Yeni Webhook" oluï¿½turun ve URL'yi kopyalayï¿½n
 #
 # ===============================================================================
 
@@ -99,37 +99,37 @@ webhook:
   # Webhook'u aktif/pasif yap
   enabled: true
   
-  # Discord Webhook URL'si (buraya Discord webhook URL'nizi yapýþtýrýn)
+  # Discord Webhook URL'si (buraya Discord webhook URL'nizi yapï¿½ï¿½tï¿½rï¿½n)
   url: "YOUR_WEBHOOK_URL_HERE"
   
-  # @everyone mention'ý gönder (dikkat: spam olabilir!)
+  # @everyone mention'ï¿½ gï¿½nder (dikkat: spam olabilir!)
   mention-everyone: false
   
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-  # ETKÝNLÝK BAÞLANGIÇ EMBED'Ý
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  # ETKï¿½NLï¿½K BAï¿½LANGIï¿½ EMBED'ï¿½
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   # Placeholders:
-  #   {delivery}    - Teslimat adý
-  #   {item}        - Ýstenen eþya
-  #   {category}    - Kategori adý
-  #   {duration}    - Süre
-  #   {winners}     - Kazanan sayýsý
-  #   {end_time}    - Bitiþ zamaný
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  #   {delivery}    - Teslimat adï¿½
+  #   {item}        - ï¿½stenen eï¿½ya
+  #   {category}    - Kategori adï¿½
+  #   {duration}    - Sï¿½re
+  #   {winners}     - Kazanan sayï¿½sï¿½
+  #   {end_time}    - Bitiï¿½ zamanï¿½
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   start:
-    # Embed baþlýðý
-    title: "?? {delivery} Baþladý!"
+    # Embed baï¿½lï¿½ï¿½ï¿½
+    title: "?? {delivery} Baï¿½ladï¿½!"
     
-    # Embed açýklamasý (\\n ile yeni satýr)
-    description: "Yeni bir teslimat etkinliði baþladý!\\n\\n**?? Teslim Edilecek Eþya:**\\n`{item}`\\n\\n**?? Kategori:** {category}\\n**?? Süre:** {duration}\\n**?? Kazanan Sayýsý:** {winners} kiþi\\n\\n*Hemen sunucuya gir ve teslimata baþla!*"
+    # Embed aï¿½ï¿½klamasï¿½ (\\n ile yeni satï¿½r)
+    description: "Yeni bir teslimat etkinliï¿½i baï¿½ladï¿½!\\n\\n**?? Teslim Edilecek Eï¿½ya:**\\n`{item}`\\n\\n**?? Kategori:** {category}\\n**?? Sï¿½re:** {duration}\\n**?? Kazanan Sayï¿½sï¿½:** {winners} kiï¿½i\\n\\n*Hemen sunucuya gir ve teslimata baï¿½la!*"
     
     # Embed rengi (hex: #00FF00 veya decimal: 65280)
     color: "#00FF00"
     
     # Footer metni
-    footer: "VeloDelivery • Teslimat Etkinlik Sistemi"
+    footer: "VeloDelivery ï¿½ Teslimat Etkinlik Sistemi"
     
-    # Thumbnail resmi (URL veya boþ býrak)
+    # Thumbnail resmi (URL veya boï¿½ bï¿½rak)
     thumbnail: ""
     
     # Author bilgisi
@@ -139,43 +139,43 @@ webhook:
     
     # Ek alanlar (fields)
     fields:
-      - name: "Nasýl Katýlýrým?"
-        value: "Sunucuya gir ve `/teslimat` komutu ile menüyü aç!"
+      - name: "Nasï¿½l Katï¿½lï¿½rï¿½m?"
+        value: "Sunucuya gir ve `/teslimat` komutu ile menï¿½yï¿½ aï¿½!"
         inline: false
   
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-  # ETKÝNLÝK BÝTÝÞ EMBED'Ý
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  # ETKï¿½NLï¿½K Bï¿½Tï¿½ï¿½ EMBED'ï¿½
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   # Placeholders:
-  #   {delivery}    - Teslimat adý
-  #   {item}        - Teslim edilen eþya
-  #   {category}    - Kategori adý
-  #   {total}       - Toplam teslimat sayýsý
-  #   {participants}- Katýlýmcý sayýsý
-  #   {winners}     - Kazananlar listesi (otomatik oluþturulur)
-  # ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  #   {delivery}    - Teslimat adï¿½
+  #   {item}        - Teslim edilen eï¿½ya
+  #   {category}    - Kategori adï¿½
+  #   {total}       - Toplam teslimat sayï¿½sï¿½
+  #   {participants}- Katï¿½lï¿½mcï¿½ sayï¿½sï¿½
+  #   {winners}     - Kazananlar listesi (otomatik oluï¿½turulur)
+  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   end:
-    # Embed baþlýðý
+    # Embed baï¿½lï¿½ï¿½ï¿½
     title: "?? {delivery} Sona Erdi!"
     
-    # Embed açýklamasý
-    description: "Teslimat etkinliði tamamlandý!\\n\\n**?? Teslim Edilen:** `{item}`\\n**?? Kategori:** {category}\\n**?? Katýlýmcý:** {participants} kiþi\\n**?? Toplam Teslimat:** {total} adet"
+    # Embed aï¿½ï¿½klamasï¿½
+    description: "Teslimat etkinliï¿½i tamamlandï¿½!\\n\\n**?? Teslim Edilen:** `{item}`\\n**?? Kategori:** {category}\\n**?? Katï¿½lï¿½mcï¿½:** {participants} kiï¿½i\\n**?? Toplam Teslimat:** {total} adet"
     
     # Embed rengi
     color: "#FFD700"
     
     # Footer metni
-    footer: "VeloDelivery • Teslimat Sistemi"
+    footer: "VeloDelivery ï¿½ Teslimat Sistemi"
     
     # Thumbnail resmi
     thumbnail: ""
     
-    # Kazananlar bölümü
+    # Kazananlar bï¿½lï¿½mï¿½
     winners:
-      # Kazananlar baþlýðý
+      # Kazananlar baï¿½lï¿½ï¿½ï¿½
       title: "??? Kazananlar"
       
-      # Kazanan formatý ({rank}, {player}, {count} kullanýlabilir)
+      # Kazanan formatï¿½ ({rank}, {player}, {count} kullanï¿½labilir)
       format: "{medal} **{player}** - {count} teslimat"
       
       # Madalya sembolleri
@@ -185,14 +185,14 @@ webhook:
         third: "??"
         other: "??"
       
-      # Kazanan yoksa gösterilecek mesaj
-      no-winners: "*Kimse katýlmadý*"
+      # Kazanan yoksa gï¿½sterilecek mesaj
+      no-winners: "*Kimse katï¿½lmadï¿½*"
       
-      # Maksimum gösterilecek kazanan sayýsý
+      # Maksimum gï¿½sterilecek kazanan sayï¿½sï¿½
       max-display: 5
 
 # ===============================================================================
-# VERÝ KAYDETME
+# VERï¿½ KAYDETME
 # ===============================================================================
 
 data:
