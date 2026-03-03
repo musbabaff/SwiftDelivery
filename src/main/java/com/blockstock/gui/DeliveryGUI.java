@@ -286,37 +286,34 @@ public class DeliveryGUI {
 
     public void openMainMenu(Player player) {
         boolean isEnglish = "en".equals(getCurrentLanguage());
-        Inventory inv = Bukkit.createInventory(null, 54, getMainTitle());
+        Inventory inv = Bukkit.createInventory(null, 36, getMainTitle());
 
         // Arka plan - siyah cam paneller
         ItemStack bg = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 54; i++)
+        for (int i = 0; i < 36; i++)
             inv.setItem(i, bg);
 
-        // Dekoratif kenar çizgisi (üst ve alt sıra gri cam)
+        // Dekoratif kenar (üst ve alt satır gri cam)
         ItemStack border = createItem(Material.GRAY_STAINED_GLASS_PANE, " ");
         for (int i = 0; i < 9; i++) {
             inv.setItem(i, border);
-            inv.setItem(45 + i, border);
+            inv.setItem(27 + i, border);
         }
 
         // Başlık ikonu (slot 4 - üst orta)
-        String titleName = isEnglish ? sc("VeloDelivery") : sc("VeloDelivery");
+        String titleName = sc("VeloDelivery");
         String titleLore = isEnglish ? sc("delivery event system") : sc("teslimat etkinlik sistemi");
         inv.setItem(4, createHead(HEAD_DELIVERY, "§e§l" + titleName, Arrays.asList(
-                "",
-                "§7" + titleLore,
-                "")));
+                "", "§7" + titleLore, "")));
 
-        // Aktif teslimatlar - dinamik ortalama
+        // Aktif teslimatlar - satır 1 (slot 9-17)
         var events = deliveryService.getAllActiveEvents();
-        int[] centeredSlots = getCenteredSlots(events.size(), 2); // 2. satır
+        int[] centeredSlots = getCenteredSlots(events.size(), 1);
         for (int i = 0; i < events.size() && i < centeredSlots.length; i++) {
-            ActiveEvent event = events.get(i);
-            inv.setItem(centeredSlots[i], createDeliveryItem(player, event));
+            inv.setItem(centeredSlots[i], createDeliveryItem(player, events.get(i)));
         }
 
-        // Bekleyen teslimatlar - dinamik ortalama
+        // Bekleyen teslimatlar - satır 2 (slot 18-26)
         var allDeliveries = configManager.getDeliveryConfig().getEnabledDeliveries();
         List<com.blockstock.model.DeliveryDefinition> waitingList = new java.util.ArrayList<>();
         for (var delivery : allDeliveries) {
@@ -324,28 +321,22 @@ public class DeliveryGUI {
             if (!isActive)
                 waitingList.add(delivery);
         }
-        int[] waitingCenteredSlots = getCenteredSlots(Math.min(waitingList.size(), 5), 4); // 4. satır
+        int[] waitingCenteredSlots = getCenteredSlots(Math.min(waitingList.size(), 5), 2);
         for (int i = 0; i < waitingList.size() && i < waitingCenteredSlots.length; i++) {
             inv.setItem(waitingCenteredSlots[i], createWaitingDeliveryItem(waitingList.get(i)));
         }
 
-        // Alt butonlar - simetrik yerleşim
+        // Alt butonlar - satır 3 (simetrik: slot 30 ve 32)
         String leaderboardName = isEnglish ? sc("leaderboard") : sc("siralama");
         String leaderboardLore = isEnglish ? sc("see top deliverers") : sc("en cok teslim edenleri gor");
         String clickText = isEnglish ? sc("click") : sc("tikla");
-        inv.setItem(48, createHead(HEAD_TOP, "§b" + leaderboardName, Arrays.asList(
-                "",
-                "§7" + leaderboardLore,
-                "",
-                "§a" + clickText)));
+        inv.setItem(30, createHead(HEAD_TOP, "§b" + leaderboardName, Arrays.asList(
+                "", "§7" + leaderboardLore, "", "§a" + clickText)));
 
         String helpName = isEnglish ? sc("help") : sc("yardim");
         String helpLore = isEnglish ? sc("learn about the system") : sc("teslimat sistemini ogren");
-        inv.setItem(50, createHead(HEAD_HELP, "§f" + helpName, Arrays.asList(
-                "",
-                "§7" + helpLore,
-                "",
-                "§a" + clickText)));
+        inv.setItem(32, createHead(HEAD_HELP, "§f" + helpName, Arrays.asList(
+                "", "§7" + helpLore, "", "§a" + clickText)));
 
         player.openInventory(inv);
     }
@@ -660,61 +651,53 @@ public class DeliveryGUI {
     }
 
     /**
-     * Custom texture ile head oluşturma - 1.16.5 - 1.20.4 uyumlu
-     */
-    /**
      * Custom texture ile head oluşturma - 1.16.5 - 1.21.4 arası tüm sürümler
      * Yöntem 1: Bukkit PlayerProfile API (Paper 1.18.1+ / Spigot 1.20.2+)
-     * Yöntem 2: Reflection ile GameProfile (eski sürümler)
+     * Yöntem 2: GameProfile reflection (1.16.5 - 1.20.4)
      */
     private void applyTexture(SkullMeta meta, String texture) {
-        // Yöntem 1: Bukkit PlayerProfile API via reflection (Paper 1.18.1+ / Spigot
-        // 1.20.2+)
+        // Yöntem 1: Bukkit PlayerProfile API - explicit class names ile
         try {
-            java.util.UUID profileId = java.util.UUID.randomUUID();
-            // Bukkit.createPlayerProfile(UUID, String) - reflection ile çağır
-            java.lang.reflect.Method createProfile = Bukkit.class.getMethod("createPlayerProfile", UUID.class,
-                    String.class);
-            Object profile = createProfile.invoke(null, profileId, "VeloDelivery");
+            Class<?> playerProfileClass = Class.forName("org.bukkit.profile.PlayerProfile");
+            Class<?> playerTexturesClass = Class.forName("org.bukkit.profile.PlayerTextures");
+
+            // Bukkit.createPlayerProfile(UUID, String)
+            java.lang.reflect.Method createProfile = Bukkit.class.getMethod("createPlayerProfile",
+                    UUID.class, String.class);
+            Object profile = createProfile.invoke(null, UUID.randomUUID(), "VeloDelivery");
 
             // profile.getTextures()
-            java.lang.reflect.Method getTextures = profile.getClass().getMethod("getTextures");
-            Object textures = getTextures.invoke(profile);
+            Object textures = playerProfileClass.getMethod("getTextures").invoke(profile);
 
-            // Base64'ten URL çıkar
+            // Base64'ten skin URL çıkar
             String decoded = new String(java.util.Base64.getDecoder().decode(texture));
             String urlStr = decoded.split("\"url\"\\s*:\\s*\"")[1].split("\"")[0];
             java.net.URL skinUrl = java.net.URI.create(urlStr).toURL();
 
             // textures.setSkin(URL)
-            java.lang.reflect.Method setSkin = textures.getClass().getMethod("setSkin", java.net.URL.class);
-            setSkin.invoke(textures, skinUrl);
+            playerTexturesClass.getMethod("setSkin", java.net.URL.class).invoke(textures, skinUrl);
 
-            // profile.setTextures(textures)
-            java.lang.reflect.Method setTextures = profile.getClass().getMethod("setTextures",
-                    textures.getClass().getInterfaces()[0]);
-            setTextures.invoke(profile, textures);
+            // profile.setTextures(PlayerTextures)
+            playerProfileClass.getMethod("setTextures", playerTexturesClass).invoke(profile, textures);
 
-            // meta.setOwnerProfile(profile)
-            java.lang.reflect.Method setOwnerProfile = meta.getClass().getMethod("setOwnerProfile",
-                    profile.getClass().getInterfaces()[0]);
-            setOwnerProfile.invoke(meta, profile);
-            return; // Başarılı
+            // meta.setOwnerProfile(PlayerProfile)
+            meta.getClass().getMethod("setOwnerProfile", playerProfileClass).invoke(meta, profile);
+            return; // Başarılı!
         } catch (Exception ignored) {
-            // Bu API mevcut değil veya başarısız oldu, yöntem 2'ye geç
+            // PlayerProfile API mevcut değil, yöntem 2'ye geç
         }
 
-        // Yöntem 2: Reflection ile GameProfile (1.16.5 - 1.18 için)
+        // Yöntem 2: GameProfile reflection (1.16.5 - 1.20.4)
         try {
             Class<?> gameProfileClass = Class.forName("com.mojang.authlib.GameProfile");
             Class<?> propertyClass = Class.forName("com.mojang.authlib.properties.Property");
 
-            Object profile = gameProfileClass.getConstructor(UUID.class, String.class)
+            Object gameProfile = gameProfileClass.getConstructor(UUID.class, String.class)
                     .newInstance(UUID.randomUUID(), "VeloDelivery");
 
-            Object properties = gameProfileClass.getMethod("getProperties").invoke(profile);
+            Object properties = gameProfileClass.getMethod("getProperties").invoke(gameProfile);
 
-            // Property constructor: bazı sürümlerde 2 parametre, bazılarında 3
+            // Property constructor: bazı sürümlerde 2, bazılarında 3 parametre
             Object property;
             try {
                 property = propertyClass.getConstructor(String.class, String.class)
@@ -727,37 +710,31 @@ public class DeliveryGUI {
             properties.getClass().getMethod("put", Object.class, Object.class)
                     .invoke(properties, "textures", property);
 
-            // CraftMetaSkull'a profile set et - birden fazla yöntem dene
-            boolean success = false;
+            // Profile'ı meta'ya set et
+            java.lang.reflect.Field profileField = meta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
 
-            // Alt-Yöntem A: "profile" field
-            try {
-                java.lang.reflect.Field profileField = meta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(meta, profile);
-                success = true;
-            } catch (NoSuchFieldException ignored) {
-            }
-
-            // Alt-Yöntem B: setProfile metodu
-            if (!success) {
+            // 1.20.5+: profile field tipi ResolvableProfile olabilir
+            if (profileField.getType().equals(gameProfileClass)) {
+                // Eski sürümler: direkt GameProfile set et
+                profileField.set(meta, gameProfile);
+            } else {
+                // 1.20.5+: ResolvableProfile oluştur GameProfile'dan
                 try {
-                    java.lang.reflect.Method setProfile = meta.getClass().getDeclaredMethod("setProfile",
-                            gameProfileClass);
-                    setProfile.setAccessible(true);
-                    setProfile.invoke(meta, profile);
-                    success = true;
-                } catch (NoSuchMethodException ignored) {
-                }
-            }
-
-            // Alt-Yöntem C: Tüm GameProfile tipindeki field'ları tara
-            if (!success) {
-                for (java.lang.reflect.Field field : meta.getClass().getDeclaredFields()) {
-                    if (field.getType().equals(gameProfileClass)) {
-                        field.setAccessible(true);
-                        field.set(meta, profile);
-                        break;
+                    Class<?> resolvableClass = profileField.getType();
+                    // ResolvableProfile(GameProfile) constructor
+                    Object resolvable = resolvableClass.getConstructor(gameProfileClass)
+                            .newInstance(gameProfile);
+                    profileField.set(meta, resolvable);
+                } catch (Exception e2) {
+                    // Son çare: setProfile metodu dene
+                    try {
+                        java.lang.reflect.Method setProfile = meta.getClass()
+                                .getDeclaredMethod("setProfile", gameProfileClass);
+                        setProfile.setAccessible(true);
+                        setProfile.invoke(meta, gameProfile);
+                    } catch (Exception e3) {
+                        logger.warning("Head texture fallback hatasi: " + e3.getMessage());
                     }
                 }
             }
