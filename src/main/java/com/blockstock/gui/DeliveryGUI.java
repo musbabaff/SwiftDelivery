@@ -16,8 +16,10 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 public class DeliveryGUI {
+    private static final Logger logger = Logger.getLogger("VeloDelivery");
     private final ConfigManager configManager;
     private final DeliveryService deliveryService;
 
@@ -159,13 +161,13 @@ public class DeliveryGUI {
     public void loadItemsConfig(File dataFolder) {
         File itemsFile = new File(dataFolder, "items.yml");
         if (!itemsFile.exists()) {
-            System.out.println("[DeliveryGUI] items.yml bulunamadi: " + itemsFile.getAbsolutePath());
+            logger.warning("items.yml bulunamadi: " + itemsFile.getAbsolutePath());
             return;
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(itemsFile);
         var itemsSection = config.getConfigurationSection("items");
         if (itemsSection == null) {
-            System.out.println("[DeliveryGUI] items.yml'de 'items' section bulunamadi!");
+            logger.warning("items.yml'de 'items' section bulunamadi!");
             return;
         }
         int loadedCount = 0;
@@ -179,7 +181,7 @@ public class DeliveryGUI {
             if (price > 0)
                 itemPrices.put(key.toUpperCase(), price);
         }
-        System.out.println("[DeliveryGUI] " + loadedCount + " esya yuklendi (items.yml)");
+        logger.info(loadedCount + " esya yuklendi (items.yml)");
     }
 
     public static String sc(String text) {
