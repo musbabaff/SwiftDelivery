@@ -1,4 +1,4 @@
-# ╔═══════════════════════════════════════════════════════════════════════════════╗
+﻿# ╔═══════════════════════════════════════════════════════════════════════════════╗
 # ║                                                                               ║
 # ║                      VeloDelivery - Fichier de Langue Français                ║
 # ║                                                                               ║
@@ -46,7 +46,7 @@ command:
     tip: "&7Admin : &f/dc&7, Joueur : &f/delivery&7, &f/deliver"
   version:
     header: "&6&l  ╔══════════════════════════════╗"
-    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.0   &6&l║"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.1   &6&l║"
     footer: "&6&l  ╚══════════════════════════════╝"
     description: "&7  Système d'événements de livraison planifiés"
     description2: "&7  pour serveurs Minecraft."
