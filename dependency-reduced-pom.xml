@@ -4,7 +4,7 @@
   <groupId>com.blockstock</groupId>
   <artifactId>VeloDelivery</artifactId>
   <name>VeloDelivery</name>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <description>Universal delivery automation plugin for Minecraft servers</description>
   <build>
     <resources>

@@ -247,15 +247,24 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
             java.util.List<com.blockstock.model.Winner> winners) {
         try {
             File configFile = new File(getDataFolder(), "config.yml");
-            if (!configFile.exists())
+            if (!configFile.exists()) {
+                getLogger().warning("[WEBHOOK] config.yml bulunamadi: " + configFile.getAbsolutePath());
                 return;
+            }
 
             var config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
             boolean enabled = config.getBoolean("webhook.enabled", false);
             String url = config.getString("webhook.url", "");
 
-            if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK"))
+            getLogger().info("[WEBHOOK-END] enabled=" + enabled + ", url="
+                    + (url != null ? url.substring(0, Math.min(url.length(), 30)) + "..." : "null"));
+
+            if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK")) {
+                getLogger().info(
+                        "[WEBHOOK-END] Atlanıyor: enabled=" + enabled + ", url_empty=" + (url == null || url.isEmpty())
+                                + ", placeholder=" + (url != null && url.contains("YOUR_WEBHOOK")));
                 return;
+            }
 
             String delTR = deliveryGUI.getDeliveryDisplayName(deliveryName);
 
@@ -298,15 +307,24 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
         try {
             // Global webhook URL'yi al
             File configFile = new File(getDataFolder(), "config.yml");
-            if (!configFile.exists())
+            if (!configFile.exists()) {
+                getLogger().warning("[WEBHOOK] config.yml bulunamadi: " + configFile.getAbsolutePath());
                 return;
+            }
 
             var config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
             boolean enabled = config.getBoolean("webhook.enabled", false);
             String url = config.getString("webhook.url", "");
 
-            if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK"))
+            getLogger().info("[WEBHOOK-START] enabled=" + enabled + ", url="
+                    + (url != null ? url.substring(0, Math.min(url.length(), 30)) + "..." : "null"));
+
+            if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK")) {
+                getLogger().info("[WEBHOOK-START] Atlanıyor: enabled=" + enabled + ", url_empty="
+                        + (url == null || url.isEmpty()) + ", placeholder="
+                        + (url != null && url.contains("YOUR_WEBHOOK")));
                 return;
+            }
 
             String delTR = deliveryGUI.getDeliveryDisplayName(deliveryName);
             String title = "📦 " + delTR + " Başladı!";

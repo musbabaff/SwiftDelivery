@@ -66,7 +66,7 @@ mvn clean compile
 mvn test
 ```
 
-The output JAR will be in `target/VeloDelivery-1.0.2.jar`.
+The output JAR will be in `target/VeloDelivery-1.0.3.jar`.
 
 ### Testing Locally
 
@@ -269,7 +269,7 @@ When reporting bugs, please include:
 |-------------|---------|
 | Minecraft Version | 1.20.4 |
 | Server Software | Paper |
-| VeloDelivery Version | 1.0.2 |
+| VeloDelivery Version | 1.0.3 |
 | Java Version | 17 |
 | Steps to Reproduce | 1. Start event... 2. Click GUI... |
 | Expected Behavior | Should show leaderboard |
