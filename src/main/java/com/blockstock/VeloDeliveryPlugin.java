@@ -67,13 +67,15 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
     private DataManager dataManager;
 
     private String currentLanguage = "tr";
+    private String latestVersion = null; // GitHub'dan kontrol edilen son sürüm
+    private boolean updateAvailable = false;
 
     @Override
     public void onEnable() {
         long startTime = System.currentTimeMillis();
 
         getLogger().info("");
-        getLogger().info("  VeloDelivery v1.0.0 (Optimized)");
+        getLogger().info("  VeloDelivery v" + getDescription().getVersion());
         getLogger().info("  Teslimat Etkinlik Sistemi");
         getLogger().info("");
 
@@ -97,6 +99,9 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
 
             long loadTime = System.currentTimeMillis() - startTime;
             getLogger().info("Basariyla yuklendi! (" + loadTime + "ms)");
+
+            // GitHub'dan güncelleme kontrolü (async)
+            checkForUpdates();
 
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Failed to enable VeloDelivery", e);
@@ -539,6 +544,87 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * GitHub'dan en son sürümü kontrol eder ve güncel değilse bildirim oluşturur.
+     */
+    private void checkForUpdates() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                String apiUrl = "https://api.github.com/repos/musbabaff/VeloDelivery/releases/latest";
+                java.net.URI uri = java.net.URI.create(apiUrl);
+                java.net.URL url = uri.toURL();
+                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", "VeloDelivery/" + getDescription().getVersion());
+                connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                            new java.io.InputStreamReader(connection.getInputStream(),
+                                    java.nio.charset.StandardCharsets.UTF_8))) {
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            response.append(line);
+                        }
+
+                        // JSON'dan tag_name çıkar (basit parse)
+                        String json2 = response.toString();
+                        int tagIndex = json2.indexOf("\"tag_name\"");
+                        if (tagIndex != -1) {
+                            int valueStart = json2.indexOf("\"", tagIndex + 10) + 1;
+                            int valueEnd = json2.indexOf("\"", valueStart);
+                            String tagName = json2.substring(valueStart, valueEnd);
+
+                            // "v" prefix'ini kaldır
+                            String remoteVersion = tagName.startsWith("v") ? tagName.substring(1) : tagName;
+                            String currentVersion = getDescription().getVersion();
+
+                            if (!currentVersion.equals(remoteVersion)
+                                    && isNewerVersion(remoteVersion, currentVersion)) {
+                                latestVersion = remoteVersion;
+                                updateAvailable = true;
+                                getLogger().info("[GUNCELLEME] Yeni surum mevcut: v" + remoteVersion +
+                                        " (Mevcut: v" + currentVersion + ")");
+                                getLogger().info("[GUNCELLEME] https://github.com/musbabaff/VeloDelivery/releases");
+                            } else {
+                                getLogger().info("[GUNCELLEME] Guncel surum kullaniliyor (v" + currentVersion + ")");
+                            }
+                        }
+                    }
+                }
+                connection.disconnect();
+            } catch (Exception e) {
+                // Güncelleme kontrolü başarısız - sessizce geç
+                getLogger().fine("[GUNCELLEME] Kontrol basarisiz: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Semantic versioning karşılaştırması (1.0.3 vs 1.0.2 gibi).
+     */
+    private boolean isNewerVersion(String remote, String current) {
+        try {
+            String[] remoteParts = remote.split("\\.");
+            String[] currentParts = current.split("\\.");
+            int length = Math.max(remoteParts.length, currentParts.length);
+            for (int i = 0; i < length; i++) {
+                int r = i < remoteParts.length ? Integer.parseInt(remoteParts[i]) : 0;
+                int c = i < currentParts.length ? Integer.parseInt(currentParts[i]) : 0;
+                if (r > c)
+                    return true;
+                if (r < c)
+                    return false;
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return false;
+    }
+
+    /**
      * Tüm ayarları yeniden yükler (reload komutu için)
      */
     private void reloadAllSettings() {
@@ -658,6 +744,18 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
             Bukkit.getScheduler().runTaskLater(this, () -> {
                 deliverPendingRewardsToPlayer(player);
             }, 20L);
+        }
+
+        // Güncelleme bildirimi (sadece OP oyuncular)
+        if (updateAvailable && latestVersion != null && player.isOp()) {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                player.sendMessage("");
+                player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §aYeni sürüm mevcut!");
+                player.sendMessage(
+                        "§7  Mevcut: §cv" + getDescription().getVersion() + " §8» §7Yeni: §av" + latestVersion);
+                player.sendMessage("§7  §ehttps://github.com/musbabaff/VeloDelivery/releases");
+                player.sendMessage("");
+            }, 60L); // 3 saniye sonra göster
         }
     }
 

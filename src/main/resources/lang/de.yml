@@ -48,7 +48,7 @@ command:
 
   version:
     header: "&6&l  ╔══════════════════════════════╗"
-    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.3   &6&l║"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.4   &6&l║"
     footer: "&6&l  ╚══════════════════════════════╝"
     description: "&7  Geplantes Liefer-Event-System"
     description2: "&7  für Minecraft-Server."
