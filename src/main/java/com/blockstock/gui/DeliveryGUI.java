@@ -51,11 +51,11 @@ public class DeliveryGUI {
     private static final String SMALL = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ";
 
     // Menu baslik sabitleri
-    public static final String MAIN_TITLE_TR = "Teslimat Menusu";
+    public static final String MAIN_TITLE_TR = "Teslimat Menüsü";
     public static final String MAIN_TITLE_EN = "Delivery Menu";
     public static final String DELIVERY_PREFIX_TR = "Teslimat: ";
     public static final String DELIVERY_PREFIX_EN = "Delivery: ";
-    public static final String LEADERBOARD_TITLE_TR = "Siralama";
+    public static final String LEADERBOARD_TITLE_TR = "Sıralama";
     public static final String LEADERBOARD_TITLE_EN = "Leaderboard";
 
     // Uyumluluk icin varsayilan degerler
@@ -326,14 +326,14 @@ public class DeliveryGUI {
         }
 
         // Alt butonlar - satir 3 (simetrik: slot 30 ve 32)
-        String leaderboardName = isEnglish ? "Leaderboard" : "Siralama";
-        String leaderboardLore = isEnglish ? "See top deliverers" : "En cok teslim edenleri gor";
-        String clickText = isEnglish ? "Click" : "Tikla";
+        String leaderboardName = isEnglish ? "Leaderboard" : "Sıralama";
+        String leaderboardLore = isEnglish ? "See top deliverers" : "En çok teslim edenleri gör";
+        String clickText = isEnglish ? "Click" : "Tıkla";
         inv.setItem(30, createHead(HEAD_TOP, "§b" + leaderboardName, Arrays.asList(
                 "", "§7" + leaderboardLore, "", "§a" + clickText)));
 
-        String helpName = isEnglish ? "Help" : "Yardim";
-        String helpLore = isEnglish ? "Learn about the system" : "Teslimat sistemini ogren";
+        String helpName = isEnglish ? "Help" : "Yardım";
+        String helpLore = isEnglish ? "Learn about the system" : "Teslimat sistemini öğren";
         inv.setItem(32, createHead(HEAD_HELP, "§f" + helpName, Arrays.asList(
                 "", "§7" + helpLore, "", "§a" + clickText)));
 
@@ -372,9 +372,9 @@ public class DeliveryGUI {
         String schedule = delivery.schedule().start();
         String nextTime = parseScheduleToReadable(schedule);
 
-        String waitingText = isEnglish ? sc("waiting") : sc("bekliyor");
-        String startText = isEnglish ? sc("start") : sc("baslangic");
-        String notStartedText = isEnglish ? sc("not started yet") : sc("henuz baslamadi");
+        String waitingText = isEnglish ? "Waiting" : "Bekliyor";
+        String startText = isEnglish ? "Start" : "Başlangıç";
+        String notStartedText = isEnglish ? "Not started yet" : "Henüz başlamadı";
 
         return createHead(HEAD_WAITING, "§7" + deliveryName, Arrays.asList(
                 "",
@@ -421,12 +421,12 @@ public class DeliveryGUI {
         int totalCount = event.getPlayerDeliveries().values().stream().mapToInt(Integer::intValue).sum();
         int rank = calculateRank(event, player.getUniqueId());
 
-        String itemText = isEnglish ? "Item" : "Esya";
+        String itemText = isEnglish ? "Item" : "Eşya";
         String categoryText = isEnglish ? "Category" : "Kategori";
         String totalText = isEnglish ? "Total" : "Toplam";
         String yoursText = isEnglish ? "Yours" : "Senin";
-        String rankText = isEnglish ? "Rank" : "Sira";
-        String clickDeliverText = isEnglish ? "Click to deliver" : "Tikla ve teslim et";
+        String rankText = isEnglish ? "Rank" : "Sıra";
+        String clickDeliverText = isEnglish ? "Click to deliver" : "Tıkla ve teslim et";
 
         return createHead(HEAD_DELIVERY, "§a" + deliveryName, Arrays.asList(
                 "",
@@ -466,21 +466,21 @@ public class DeliveryGUI {
         int rank = calculateRank(event, player.getUniqueId());
 
         // Dil string'leri
-        String requiredItemText = isEnglish ? "Required Item" : "Istenen Esya";
+        String requiredItemText = isEnglish ? "Required Item" : "İstenen Eşya";
         String categoryText = isEnglish ? "Category" : "Kategori";
         String totalDeliveriesText = isEnglish ? "Total Deliveries" : "Toplam Teslimat";
-        String yourDeliveriesText = isEnglish ? "Your Deliveries" : "Senin Teslimat";
-        String yourRankText = isEnglish ? "Your Rank" : "Siran";
+        String yourDeliveriesText = isEnglish ? "Your Deliveries" : "Senin Teslimatın";
+        String yourRankText = isEnglish ? "Your Rank" : "Sıran";
         String deliverFromInvText = isEnglish ? "Deliver from Inventory" : "Envanterden Teslim Et";
-        String allItemsText = isEnglish ? "All your" : "Envanterindeki tum";
-        String itemsDeliverText = isEnglish ? "items will be delivered" : "esyalarini teslim et";
-        String deliverFromChestText = isEnglish ? "Deliver from Chest" : "Sandiktan Teslim Et";
-        String rightClickChestText = isEnglish ? "Right click a chest" : "Bir sandiga sag tikla";
-        String insideText = isEnglish ? "inside" : "icindeki";
-        String timeLeftText = isEnglish ? "10 seconds to select" : "10 saniye suren var";
-        String clickText = isEnglish ? "Click" : "Tikla";
+        String allItemsText = isEnglish ? "All your" : "Envanterindeki tüm";
+        String itemsDeliverText = isEnglish ? "items will be delivered" : "eşyalarını teslim et";
+        String deliverFromChestText = isEnglish ? "Deliver from Chest" : "Sandıktan Teslim Et";
+        String rightClickChestText = isEnglish ? "Right click a chest" : "Bir sandığa sağ tıkla";
+        String insideText = isEnglish ? "inside" : "içindeki";
+        String timeLeftText = isEnglish ? "10 seconds to select" : "10 saniye süren var";
+        String clickText = isEnglish ? "Click" : "Tıkla";
         String backText = isEnglish ? "Back" : "Geri";
-        String returnMainText = isEnglish ? "Return to main menu" : "Ana menuye don";
+        String returnMainText = isEnglish ? "Return to main menu" : "Ana menüye dön";
 
         // Bilgi (slot 13 - üst orta)
         inv.setItem(13, createHead(HEAD_DELIVERY, "§e" + deliveryName, Arrays.asList(
@@ -536,7 +536,7 @@ public class DeliveryGUI {
         var events = deliveryService.getAllActiveEvents();
         if (events.isEmpty()) {
             String noActiveText = isEnglish ? "No active delivery" : "Aktif teslimat yok";
-            String waitingText = isEnglish ? "Waiting for delivery event" : "Siralama icin teslimat bekleniyor";
+            String waitingText = isEnglish ? "Waiting for delivery event" : "Sıralama için teslimat bekleniyor";
             inv.setItem(22, createHead(HEAD_HELP, "§7" + noActiveText, Arrays.asList(
                     "",
                     "§8" + waitingText)));
@@ -565,7 +565,7 @@ public class DeliveryGUI {
         }
 
         String backText = isEnglish ? "Back" : "Geri";
-        String returnMainText = isEnglish ? "Return to main menu" : "Ana menuye don";
+        String returnMainText = isEnglish ? "Return to main menu" : "Ana menüye dön";
         inv.setItem(49, createHead(HEAD_BACK, "§c" + backText, Arrays.asList(
                 "",
                 "§7" + returnMainText)));
