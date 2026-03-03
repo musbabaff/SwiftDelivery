@@ -1,0 +1,283 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════╗
+# ║                                                                               ║
+# ║                      VeloDelivery - Fichier de Langue Français                ║
+# ║                                                                               ║
+# ║  Système Professionnel d'Événements de Livraison pour Serveurs Minecraft      ║
+# ║  Tous les messages supportent les codes couleur et les placeholders           ║
+# ║                                                                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════════╝
+
+general:
+  prefix: "&e&lV&6elo&e&lD&6elivery &8»"
+  no_permission: "&cVous n'avez pas la permission d'utiliser cette commande."
+  player_only: "&cCette commande ne peut être utilisée que par les joueurs."
+  unknown_command: "&cCommande inconnue : &f{command}"
+  unknown_command_tip: "&7Utilisez &e/dc help &7pour les commandes disponibles."
+  console_name: "Console"
+  enabled: "&aVeloDelivery a été activé !"
+  disabled: "&cVeloDelivery a été désactivé !"
+
+command:
+  reload:
+    start: "&7⟳ Rechargement de la configuration..."
+    success: "&a✓ Configuration rechargée avec succès !"
+    success_with_warnings: "&e⚠ Chargé avec {count} avertissement(s). Vérifiez la console."
+    failed: "&c✗ Échec du rechargement ! La configuration précédente reste active."
+  help:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fMenu d'Aide"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    basic_header: "&e&lCommandes de Base"
+    cmd_help: "  &e/dc help &8- &7Affiche ce menu"
+    cmd_version: "  &e/dc version &8- &7Version du plugin"
+    admin_header: "&c&lCommandes Admin"
+    cmd_reload: "  &e/dc reload &8- &7Recharger la configuration"
+    cmd_info: "  &e/dc info &8- &7Informations système"
+    cmd_categories: "  &e/dc categories &8- &7Lister les catégories"
+    event_header: "&a&lGestion des Événements"
+    cmd_list: "  &e/dc list &8- &7Lister toutes les livraisons"
+    cmd_status: "  &e/dc status [nom] &8- &7Statut de l'événement"
+    cmd_start: "  &e/dc start <nom> [durée] [gagnants] &8- &7Démarrer un événement"
+    cmd_stop: "  &e/dc stop <nom> &8- &7Arrêter un événement"
+    cmd_top: "  &e/dc top [nom] &8- &7Classement"
+    player_header: "&b&lCommandes Joueur"
+    cmd_delivery: "  &e/delivery &8- &7Ouvrir le menu de livraison"
+    cmd_deliver: "  &e/deliver &8- &7Livrer depuis l'inventaire"
+    tip: "&7Admin : &f/dc&7, Joueur : &f/delivery&7, &f/deliver"
+  version:
+    header: "&6&l  ╔══════════════════════════════╗"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.0   &6&l║"
+    footer: "&6&l  ╚══════════════════════════════╝"
+    description: "&7  Système d'événements de livraison planifiés"
+    description2: "&7  pour serveurs Minecraft."
+    authors: "&7  Développeur : &fmusbabaff"
+    api: "&7  API : &fSpigot/Paper 1.16.5+"
+  info:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fInfo Système"
+    categories: "  &7Catégories    &8│ &f{count}"
+    deliveries: "  &7Livraisons    &8│ &f{total} &7(&a{enabled} actives&7)"
+    active: "  &7En cours       &8│ &a{count} &7événements"
+    languages: "  &7Langues        &8│ &ftr, en, de, es, fr, ru, zh, pt"
+  list:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fListe des Livraisons"
+    empty: "&7  Aucune livraison définie."
+    empty_tip: "&7  &oModifiez deliveries.yml pour ajouter des livraisons."
+    item_running: "  &a▶ &f{name} &a[EN COURS]"
+    item_ready: "  &e● &f{name} &e[PRÊT]"
+    item_disabled: "  &c○ &f{name} &c[DÉSACTIVÉ]"
+    category: "     &7Catégorie : &f{category} &8({mode})"
+    winners: "     &7Gagnants : &f{count} joueurs"
+    total: "&7  Total : &f{count} &7livraisons"
+  status:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f{name}"
+    running: "  &7Statut       &8│ &a● En cours"
+    not_running: "  &7Statut       &8│ &c○ Arrêté"
+    category: "  &7Catégorie    &8│ &f{category}"
+    item: "  &7Objet        &8│ &e{item}"
+    participants: "  &7Participants &8│ &f{count} joueurs"
+    deliveries: "  &7Livraisons   &8│ &f{count} objets"
+    start_time: "  &7Début        &8│ &f{time}"
+    end_time: "  &7Fin          &8│ &f{time}"
+    not_found: "&c✗ Livraison introuvable : &f{name}"
+    not_active: "&7ℹ Cette livraison n'est pas active : &f{name}"
+    not_active_tip: "&7  Démarrer avec : &e/dc start {name}"
+    no_active: "&7ℹ Aucun événement actif pour le moment."
+    no_active_tip: "&7  &oDémarrer un avec : &e/dc start <nom>"
+  start:
+    usage: "&c✗ Utilisation : &e/dc start <livraison> [durée] [gagnants]"
+    usage_duration: "&7  Format de durée : &f1h&7, &f30m&7, &f2h30m"
+    usage_winners: "&7  Gagnants : &f1-10 &7(nombre)"
+    usage_example: "&7  Exemple : &e/dc start daily 2h 3"
+    usage_list: "&7  Livraisons disponibles : &e/dc list"
+    not_found: "&c✗ Livraison introuvable : &f{name}"
+    already_running: "&c✗ Cet événement est déjà en cours : &f{name}"
+    already_running_tip: "&7  Voir le statut : &e/dc status {name}"
+    invalid_duration: "&c✗ Format de durée invalide : &f{duration}"
+    invalid_duration_tip: "&7  Exemple : &f1h&7, &f30m&7, &f2h30m"
+    invalid_winners: "&c✗ Les gagnants doivent être entre 1-10 : &f{count}"
+    failed: "&c✗ Impossible de démarrer l'événement !"
+    failed_tip: "&7  La catégorie ou l'objet n'a pas pu être résolu."
+    success: "&a✓ Événement démarré !"
+    success_delivery: "  &7Livraison    &8│ &f{name}"
+    success_category: "  &7Catégorie    &8│ &f{category}"
+    success_item: "  &7Objet        &8│ &e{item}"
+    success_duration: "  &7Durée        &8│ &f{duration}"
+    success_winners: "  &7Gagnants     &8│ &f{count} joueurs"
+  stop:
+    usage: "&c✗ Utilisation : &e/dc stop <livraison>"
+    usage_tip: "&7  Événements actifs : &e/dc status"
+    not_found: "&c✗ Cet événement n'est pas actif : &f{name}"
+    success: "&c■ Événement arrêté : &f{name}"
+    winners_header: "&7Gagnants :"
+    winner_format: "  {medal} &f{player} &7- &e{count} livraisons"
+    no_winners: "&7  Aucun gagnant - personne n'a livré."
+  top:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  Classement &8│ &f{item}"
+    empty: "&7  Pas encore de livraisons."
+    entry: "  {medal} &f{player} &8- &e{count} &7livraisons"
+    total: "&7  Total : &f{count} &7livraisons"
+    no_active: "&7ℹ Aucun événement actif."
+  categories:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fListe des Catégories"
+    empty: "&7  Aucune catégorie définie."
+    empty_tip: "&7  &oVérifiez le fichier categories.yml."
+    item: "  &e▸ &f{name} &8(&7{count} objets&8)"
+    total: "&7  Total : &f{count} &7catégories"
+
+event:
+  start:
+    broadcast: "&a{delivery} &7a commencé ! &eRequis : &f{item}"
+    title: "&a&l{delivery}"
+    subtitle: "&7Requis : &e{item}"
+  end:
+    broadcast: "&c{delivery} &7est terminé !"
+    winners_header: "&6Gagnants :"
+    winner_format: "  {color}{rank}. &f{player} &8- &e{count} &7livraisons"
+    no_winners: "&7  Aucun gagnant - personne n'a livré."
+    title: "&c&lÉVÉNEMENT TERMINÉ !"
+    subtitle: "&7{delivery}"
+  active:
+    info: "&7Actif : &f{delivery}"
+    item: "&7Objet : &e{item}"
+    category: "&7Catégorie : &f{category}"
+    remaining: "&7Restant : &f{time}"
+    participants: "&7Participants : &f{count}"
+  none:
+    message: "&7Aucun événement de livraison actif pour le moment."
+    tip: "&7Revenez plus tard ou attendez les événements planifiés."
+
+delivery:
+  success:
+    title: "&a&lLIVRÉ !"
+    subtitle: "&e{amount} &7x &f{item}"
+    message: "&a{amount} &7x &e{item} &7livré !"
+    stats: "&7Total : &f{total} &8| &7Rang : &e#{rank}"
+  chest:
+    prompt: "&aCliquez droit sur un coffre ! &7(10 secondes)"
+    success: "&a{amount} &7x &e{item} &7livré depuis le coffre !"
+    not_chest: "&cCeci n'est pas un coffre !"
+    empty: "&cPas de &e{item} &cdans ce coffre !"
+    timeout: "&cDélai de sélection du coffre expiré."
+  inventory:
+    empty: "&cPas de &e{item} &cdans votre inventaire !"
+  error:
+    no_active: "&cAucun événement de livraison actif !"
+    invalid_item: "&cObjet invalide : &f{item}"
+    not_started: "&cCette livraison n'a pas encore commencé !"
+
+reward:
+  received:
+    item: "&a&l✦ RÉCOMPENSE &r&7Reçu : &f{amount}x {item}&7 !"
+    command: "&a&l✦ RÉCOMPENSE &r&7Commande de récompense exécutée !"
+    both: "&a&l✦ RÉCOMPENSE &r&7Reçu : &f{amount}x {item} &7+ bonus !"
+  pending:
+    has_pending: "&eVous avez des récompenses en attente ! Elles seront livrées bientôt."
+    delivered: "&aVos récompenses en attente ont été livrées !"
+    none: "&7Vous n'avez pas de récompenses en attente."
+  inventory_full: "&eInventaire plein ! Récompense sauvegardée pour plus tard."
+
+gui:
+  main:
+    title: "Menu de Livraison"
+    active_delivery: "&a{name}"
+    waiting_delivery: "&7{name}"
+    leaderboard: "&bClassement"
+    leaderboard_lore: "&7Voir les meilleurs livreurs"
+    help: "&fAide"
+    help_lore: "&7En savoir plus sur le système"
+  detail:
+    title: "Livraison : {name}"
+    info: "&e{name}"
+    required_item: "&7Objet Requis"
+    category: "&7Catégorie : &f{category}"
+    total_deliveries: "&7Livraisons Totales : &e{count}"
+    your_deliveries: "&7Vos Livraisons : &a{count}"
+    your_rank: "&7Votre Rang : &e#{rank}"
+    deliver_inventory: "&aLivrer depuis l'Inventaire"
+    deliver_inventory_lore: "&7Livrez tous les {item} de votre inventaire"
+    deliver_chest: "&6Livrer depuis le Coffre"
+    deliver_chest_lore: "&7Cliquez droit sur un coffre"
+    deliver_chest_time: "&e10 secondes pour sélectionner"
+    back: "&cRetour"
+    back_lore: "&7Retourner au menu principal"
+  leaderboard:
+    title: "Classement"
+    no_active: "&7Pas d'Événement Actif"
+    no_active_lore: "&8En attente d'un événement de livraison"
+    entry: "{color}#{rank} {player}"
+    entry_lore: "&7Livraisons : &e{count}"
+    back: "&cRetour"
+    back_lore: "&7Retourner au menu principal"
+  waiting:
+    status: "&8En attente"
+    start_time: "&7Début : &e{time}"
+    not_started: "&8Pas encore commencé"
+
+error:
+  config_load: "&cErreur de configuration : &f{error}"
+  event_start: "&cImpossible de démarrer l'événement : &f{error}"
+  event_end: "&cImpossible de terminer l'événement : &f{error}"
+  reward_give: "&cImpossible de donner la récompense : &f{error}"
+  webhook_send: "&cErreur webhook : &f{error}"
+  invalid_player: "&cJoueur invalide : &f{player}"
+  database: "&cUne erreur de base de données s'est produite."
+  internal: "&cUne erreur interne s'est produite."
+
+validation:
+  missing_field: "Champ requis manquant : {field}"
+  invalid_value: "Valeur invalide pour {field} : {value}"
+  invalid_category: "Catégorie introuvable : {category}"
+  invalid_item: "Objet invalide : {item}"
+  invalid_timezone: "Fuseau horaire invalide : {timezone}"
+  invalid_schedule: "Planning invalide : {expression}"
+  empty_category: "Catégorie sans objets : {category}"
+  duplicate_delivery: "Nom de livraison en double : {name}"
+
+webhook:
+  start:
+    title: "📦 {delivery} a Commencé !"
+    description: "Un nouvel événement de livraison a commencé !\\n\\n**🎯 Objet Requis :**\\n`{item}`\\n\\n**📁 Catégorie :** {category}\\n**⏱️ Durée :** {duration}\\n**🏆 Gagnants :** {winners} joueurs\\n\\n*Rejoignez le serveur et commencez à livrer !*"
+    color: 65280
+    footer: "VeloDelivery • Système d'Événements de Livraison"
+  end:
+    title: "🏆 {delivery} est Terminé !"
+    description: "L'événement de livraison est terminé !\\n\\n**📦 Objet Livré :** `{item}`\\n**📁 Catégorie :** {category}\\n**👥 Participants :** {participants} joueurs\\n**📊 Total Livraisons :** {total} objets"
+    color: 16766720
+    footer: "VeloDelivery • Système d'Événements de Livraison"
+    winners_title: "🎖️ Gagnants"
+    winner_format: "{medal} **{player}** - {count} livraisons"
+    no_winners: "*Aucun participant*"
+  medals:
+    first: "🥇"
+    second: "🥈"
+    third: "🥉"
+    other: "🏅"
+
+time:
+  day: "{count} jour"
+  days: "{count} jours"
+  hour: "{count} heure"
+  hours: "{count} heures"
+  minute: "{count} minute"
+  minutes: "{count} minutes"
+  second: "{count} seconde"
+  seconds: "{count} secondes"
+  now: "Maintenant"
+  and: "et"
+
+medals:
+  first: "&6&l①"
+  second: "&f&l②"
+  third: "&c&l③"
+  other: "&7{rank}."
+
+rank_colors:
+  first: "&6"
+  second: "&f"
+  third: "&c"
+  other: "&7"

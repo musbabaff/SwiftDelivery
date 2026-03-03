@@ -1,0 +1,152 @@
+﻿# ╔═══════════════════════════════════════════════════════════════════════════════╗
+# ║                                                                               ║
+# ║                              VeloDelivery                                     ║
+# ║                    Türkiye'nin En Kapsamlı Teslimat Sistemi                   ║
+# ║                                                                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════════╝
+
+name: VeloDelivery
+version: ${project.version}
+main: com.blockstock.VeloDeliveryPlugin
+api-version: '1.16'
+authors:
+  - musbabaff
+description: |
+ Sunucu sahipleri için kapsamlı teslimat sistemi.
+ 1.16.5+ tüm versiyonlarla uyumlu.
+website: https://modrinth.com/plugin/VeloDelivery
+softdepend:
+  - PlaceholderAPI
+  - Vault
+  - HolographicDisplays
+  - DecentHolograms
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# KOMUTLAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+commands:
+  velodelivery:
+    description: VeloDelivery admin komutları
+    usage: /<command> <help|reload|list|start|stop|status>
+    aliases: [dc]
+    permission: velodelivery.admin
+  
+  # Oyuncu teslimat menüsü (Türkçe)
+  teslimat:
+    description: Teslimat menüsünü açar
+    usage: /<command> [bilgi|top]
+    aliases: [tm]
+    permission: velodelivery.use
+  
+  # Oyuncu teslimat menüsü (İngilizce)
+  delivery:
+    description: Opens delivery menu
+    usage: /<command> [info|top]
+    aliases: [deliver, deliverymenu, dm]
+    permission: velodelivery.use
+  
+  # Hızlı teslimat komutu (Türkçe)
+  teslim:
+    description: Eşyaları hızlıca teslim eder
+    usage: /<command> [kategori|sandik]
+    aliases: []
+    permission: velodelivery.deliver
+  
+  # Hızlı teslimat komutu (İngilizce)
+  deliver:
+    description: Quickly delivers items
+    usage: /<command> [category|chest]
+    aliases: [del]
+    permission: velodelivery.deliver
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# YETKİLER
+# ═══════════════════════════════════════════════════════════════════════════════
+
+permissions:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ANA YETKİLER
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  velodelivery.*:
+    description: Tüm VeloDelivery yetkileri
+    default: op
+    children:
+      velodelivery.admin: true
+      velodelivery.use: true
+      velodelivery.deliver: true
+      velodelivery.bypass: true
+  
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ADMİN YETKİLERİ
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  velodelivery.admin:
+    description: Tüm admin yetkileri
+    default: op
+    children:
+      velodelivery.admin.reload: true
+      velodelivery.admin.start: true
+      velodelivery.admin.stop: true
+      velodelivery.admin.list: true
+      velodelivery.admin.status: true
+  
+  velodelivery.admin.reload:
+    description: Konfigürasyonu yeniden yükleme
+    default: op
+  
+  velodelivery.admin.start:
+    description: Teslimat başlatma
+    default: op
+  
+  velodelivery.admin.stop:
+    description: Teslimat durdurma
+    default: op
+  
+  velodelivery.admin.list:
+    description: Teslimat listesi görüntüleme
+    default: op
+  
+  velodelivery.admin.status:
+    description: Durum görüntüleme
+    default: op
+  
+  # ─────────────────────────────────────────────────────────────────────────────
+  # OYUNCU YETKİLERİ
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  velodelivery.use:
+    description: Teslimat menüsünü kullanma
+    default: true
+  
+  velodelivery.deliver:
+    description: Eşya teslim etme
+    default: true
+  
+  velodelivery.deliver.auto:
+    description: Otomatik teslimat kullanma (/teslim kategori)
+    default: true
+  
+  velodelivery.deliver.chest:
+    description: Sandık teslimatı kullanma
+    default: true
+  
+  # ─────────────────────────────────────────────────────────────────────────────
+  # BYPASS YETKİLERİ
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  velodelivery.bypass:
+    description: Tüm bypass yetkileri
+    default: op
+    children:
+      velodelivery.bypass.cooldown: true
+      velodelivery.bypass.limit: true
+  
+  velodelivery.bypass.cooldown:
+    description: Bekleme süresini atla
+    default: op
+  
+  velodelivery.bypass.limit:
+    description: Teslimat limitini atla
+    default: op

@@ -1,0 +1,428 @@
+﻿# ╔═══════════════════════════════════════════════════════════════════════════════╗
+# ║                                                                               ║
+# ║                      VeloDelivery - English Language                          ║
+# ║                                                                               ║
+# ║  Professional Delivery Event System for Minecraft Servers                     ║
+# ║  All messages support color codes and placeholders                            ║
+# ║                                                                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════════╝
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+# COLOR CODES
+# ═══════════════════════════════════════════════════════════════════════════════
+#   &0 Black       &1 Dark Blue    &2 Dark Green   &3 Dark Aqua
+#   &4 Dark Red    &5 Dark Purple  &6 Gold         &7 Gray
+#   &8 Dark Gray   &9 Blue         &a Green        &b Aqua
+#   &c Red         &d Light Purple &e Yellow       &f White
+#   &l Bold        &o Italic       &n Underline    &m Strikethrough
+#   &k Magic       &r Reset
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+# PLACEHOLDERS
+# ═══════════════════════════════════════════════════════════════════════════════
+#   {player}          - Player name
+#   {player_uuid}     - Player UUID
+#   {category}        - Category name
+#   {item}            - Item name
+#   {delivery_name}   - Delivery event name
+#   {amount}          - Amount/Count
+#   {rank}            - Player rank in leaderboard
+#   {total}           - Total deliveries
+#   {start_time}      - Event start time
+#   {end_time}        - Event end time
+#   {remaining_time}  - Time remaining
+#   {timezone}        - Server timezone
+#   {winner_count}    - Number of winners
+#   {winners}         - Winners list
+#   {error}           - Error message
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  GENERAL SETTINGS                                                           │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+general:
+  # Plugin prefix - appears before all messages
+  prefix: "&e&lV&6elo&e&lD&6elivery &8»"
+  
+  # Permission denied message
+  no_permission: "&cYou don't have permission to use this command."
+  
+  # Console trying to use player-only command
+  player_only: "&cThis command can only be used by players."
+  
+  # Unknown subcommand
+  unknown_command: "&cUnknown command: &f{command}"
+  unknown_command_tip: "&7Use &e/dc help &7for available commands."
+  
+  # Console sender name
+  console_name: "Console"
+  
+  # Plugin enabled/disabled
+  enabled: "&aVeloDelivery has been enabled!"
+  disabled: "&cVeloDelivery has been disabled!"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  COMMAND MESSAGES                                                           │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+command:
+  # /dc reload
+  reload:
+    start: "&7⟳ Reloading configuration..."
+    success: "&a✓ Configuration reloaded successfully!"
+    success_with_warnings: "&e⚠ Loaded with {count} warning(s). Check console."
+    failed: "&c✗ Failed to reload! Previous config remains active."
+  
+  # /dc help
+  help:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fHelp Menu"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    basic_header: "&e&lBasic Commands"
+    cmd_help: "  &e/dc help &8- &7Shows this help menu"
+    cmd_version: "  &e/dc version &8- &7Shows plugin version"
+    
+    admin_header: "&c&lAdmin Commands"
+    cmd_reload: "  &e/dc reload &8- &7Reloads configuration"
+    cmd_info: "  &e/dc info &8- &7Shows system information"
+    cmd_categories: "  &e/dc categories &8- &7Lists all categories"
+    
+    event_header: "&a&lEvent Management"
+    cmd_list: "  &e/dc list &8- &7Lists all deliveries"
+    cmd_status: "  &e/dc status [name] &8- &7Shows event status"
+    cmd_start: "  &e/dc start <name> [duration] [winners] &8- &7Starts event"
+    cmd_stop: "  &e/dc stop <name> &8- &7Stops event"
+    cmd_top: "  &e/dc top [name] &8- &7Shows leaderboard"
+    
+    player_header: "&b&lPlayer Commands"
+    cmd_delivery: "  &e/teslimat &8- &7Opens delivery menu"
+    cmd_deliver: "  &e/teslim &8- &7Delivers items from inventory"
+    
+    tip: "&7Admin: &f/dc&7, Player: &f/teslimat&7, &f/teslim"
+  
+  # /dc version
+  version:
+    header: "&6&l  ╔══════════════════════════════╗"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.0   &6&l║"
+    footer: "&6&l  ╚══════════════════════════════╝"
+    description: "&7  Scheduled delivery event system"
+    description2: "&7  for Minecraft servers."
+    authors: "&7  Developer: &fmusbabaff"
+    api: "&7  API: &fSpigot/Paper 1.16.5+"
+  
+  # /dc info
+  info:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fSystem Info"
+    categories: "  &7Categories    &8│ &f{count}"
+    deliveries: "  &7Deliveries    &8│ &f{total} &7(&a{enabled} enabled&7)"
+    active: "  &7Active Events &8│ &a{count}"
+    languages: "  &7Languages     &8│ &ftr, en, de, es, fr, ru, zh, pt"
+  
+  # /dc list
+  list:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fDelivery List"
+    empty: "&7  No deliveries defined."
+    empty_tip: "&7  &oEdit deliveries.yml to add deliveries."
+    item_running: "  &a▶ &f{name} &a[RUNNING]"
+    item_ready: "  &e● &f{name} &e[READY]"
+    item_disabled: "  &c○ &f{name} &c[DISABLED]"
+    category: "     &7Category: &f{category} &8({mode})"
+    winners: "     &7Winners: &f{count} players"
+    total: "&7  Total: &f{count} &7deliveries"
+  
+  # /dc status
+  status:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f{name}"
+    running: "  &7Status       &8│ &a● Running"
+    not_running: "  &7Status       &8│ &c○ Not Running"
+    category: "  &7Category     &8│ &f{category}"
+    item: "  &7Item         &8│ &e{item}"
+    participants: "  &7Participants &8│ &f{count} players"
+    deliveries: "  &7Deliveries   &8│ &f{count} items"
+    start_time: "  &7Started      &8│ &f{time}"
+    end_time: "  &7Ends         &8│ &f{time}"
+    not_found: "&c✗ Delivery not found: &f{name}"
+    not_active: "&7ℹ This delivery is not active: &f{name}"
+    not_active_tip: "&7  Start it with: &e/dc start {name}"
+    no_active: "&7ℹ No active events at the moment."
+    no_active_tip: "&7  &oStart one with: &e/dc start <name>"
+  
+  # /dc start
+  start:
+    usage: "&c✗ Usage: &e/dc start <delivery> [duration] [winners]"
+    usage_duration: "&7  Duration format: &f1h&7, &f30m&7, &f2h30m"
+    usage_winners: "&7  Winners: &f1-10 &7(number)"
+    usage_example: "&7  Example: &e/dc start daily 2h 3"
+    usage_list: "&7  Available deliveries: &e/dc list"
+    not_found: "&c✗ Delivery not found: &f{name}"
+    already_running: "&c✗ This event is already running: &f{name}"
+    already_running_tip: "&7  Check status: &e/dc status {name}"
+    invalid_duration: "&c✗ Invalid duration format: &f{duration}"
+    invalid_duration_tip: "&7  Example: &f1h&7, &f30m&7, &f2h30m"
+    invalid_winners: "&c✗ Winners must be between 1-10: &f{count}"
+    failed: "&c✗ Failed to start event!"
+    failed_tip: "&7  Category or item could not be resolved."
+    success: "&a✓ Event started!"
+    success_delivery: "  &7Delivery    &8│ &f{name}"
+    success_category: "  &7Category    &8│ &f{category}"
+    success_item: "  &7Item        &8│ &e{item}"
+    success_duration: "  &7Duration    &8│ &f{duration}"
+    success_winners: "  &7Winners     &8│ &f{count} players"
+  
+  # /dc stop
+  stop:
+    usage: "&c✗ Usage: &e/dc stop <delivery>"
+    usage_tip: "&7  Active events: &e/dc status"
+    not_found: "&c✗ This event is not active: &f{name}"
+    success: "&c■ Event stopped: &f{name}"
+    winners_header: "&7Winners:"
+    winner_format: "  {medal} &f{player} &7- &e{count} deliveries"
+    no_winners: "&7  No winners - nobody delivered."
+  
+  # /dc top
+  top:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  Leaderboard &8│ &f{item}"
+    empty: "&7  No deliveries yet."
+    entry: "  {medal} &f{player} &8- &e{count} &7deliveries"
+    total: "&7  Total: &f{count} &7deliveries"
+    no_active: "&7ℹ No active events."
+  
+  # /dc categories
+  categories:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &fCategory List"
+    empty: "&7  No categories defined."
+    empty_tip: "&7  &oCheck categories.yml file."
+    item: "  &e▸ &f{name} &8(&7{count} items&8)"
+    total: "&7  Total: &f{count} &7categories"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  EVENT MESSAGES                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+event:
+  # Event start broadcast
+  start:
+    broadcast: "&a{delivery} &7has started! &eRequired: &f{item}"
+    title: "&a&l{delivery}"
+    subtitle: "&7Required: &e{item}"
+  
+  # Event end broadcast
+  end:
+    broadcast: "&c{delivery} &7has ended!"
+    winners_header: "&6Winners:"
+    winner_format: "  {color}{rank}. &f{player} &8- &e{count} &7deliveries"
+    no_winners: "&7  No winners - nobody delivered."
+    title: "&c&lEVENT ENDED!"
+    subtitle: "&7{delivery}"
+  
+  # Active event info
+  active:
+    info: "&7Active: &f{delivery}"
+    item: "&7Item: &e{item}"
+    category: "&7Category: &f{category}"
+    remaining: "&7Remaining: &f{time}"
+    participants: "&7Participants: &f{count}"
+  
+  # No active event
+  none:
+    message: "&7No active delivery event at the moment."
+    tip: "&7Check back later or wait for scheduled events."
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  DELIVERY MESSAGES                                                          │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+delivery:
+  # Successful delivery
+  success:
+    title: "&a&lDELIVERED!"
+    subtitle: "&e{amount} &7x &f{item}"
+    message: "&a{amount} &7x &e{item} &7delivered!"
+    stats: "&7Total: &f{total} &8| &7Rank: &e#{rank}"
+  
+  # Delivery from chest
+  chest:
+    prompt: "&aRight-click a chest! &7(10 seconds)"
+    success: "&a{amount} &7x &e{item} &7delivered from chest!"
+    not_chest: "&cThis is not a chest!"
+    empty: "&cNo &e{item} &cfound in this chest!"
+    timeout: "&cChest selection timed out."
+  
+  # Delivery from inventory
+  inventory:
+    empty: "&cNo &e{item} &cin your inventory!"
+  
+  # Errors
+  error:
+    no_active: "&cNo active delivery event!"
+    invalid_item: "&cInvalid item: &f{item}"
+    not_started: "&cThis delivery hasn't started yet!"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  REWARD MESSAGES                                                            │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+reward:
+  # Reward received
+  received:
+    item: "&a&l✦ REWARD &r&7Received &f{amount}x {item}&7!"
+    command: "&a&l✦ REWARD &r&7Reward command executed!"
+    both: "&a&l✦ REWARD &r&7Received &f{amount}x {item} &7+ bonus!"
+  
+  # Pending rewards
+  pending:
+    has_pending: "&eYou have pending rewards! They will be delivered shortly."
+    delivered: "&aYour pending rewards have been delivered!"
+    none: "&7You have no pending rewards."
+  
+  # Inventory full
+  inventory_full: "&eInventory full! Reward saved for later."
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  GUI MESSAGES                                                               │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+gui:
+  # Main menu
+  main:
+    title: "Delivery Menu"
+    active_delivery: "&a{name}"
+    waiting_delivery: "&7{name}"
+    leaderboard: "&bLeaderboard"
+    leaderboard_lore: "&7See top deliverers"
+    help: "&fHelp"
+    help_lore: "&7Learn about the system"
+  
+  # Delivery detail menu
+  detail:
+    title: "Delivery: {name}"
+    info: "&e{name}"
+    required_item: "&7Required Item"
+    category: "&7Category: &f{category}"
+    total_deliveries: "&7Total Deliveries: &e{count}"
+    your_deliveries: "&7Your Deliveries: &a{count}"
+    your_rank: "&7Your Rank: &e#{rank}"
+    deliver_inventory: "&aDeliver from Inventory"
+    deliver_inventory_lore: "&7Deliver all {item} from your inventory"
+    deliver_chest: "&6Deliver from Chest"
+    deliver_chest_lore: "&7Right-click a chest to deliver"
+    deliver_chest_time: "&e10 seconds to select"
+    back: "&cBack"
+    back_lore: "&7Return to main menu"
+  
+  # Leaderboard menu
+  leaderboard:
+    title: "Leaderboard"
+    no_active: "&7No Active Event"
+    no_active_lore: "&8Waiting for delivery event"
+    entry: "{color}#{rank} {player}"
+    entry_lore: "&7Deliveries: &e{count}"
+    back: "&cBack"
+    back_lore: "&7Return to main menu"
+  
+  # Waiting delivery
+  waiting:
+    status: "&8Waiting"
+    start_time: "&7Starts: &e{time}"
+    not_started: "&8Not started yet"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  ERROR MESSAGES                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+error:
+  config_load: "&cConfiguration error: &f{error}"
+  event_start: "&cFailed to start event: &f{error}"
+  event_end: "&cFailed to end event: &f{error}"
+  reward_give: "&cFailed to give reward: &f{error}"
+  webhook_send: "&cWebhook error: &f{error}"
+  invalid_player: "&cInvalid player: &f{player}"
+  database: "&cA database error occurred."
+  internal: "&cAn internal error occurred."
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  VALIDATION MESSAGES                                                        │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+validation:
+  missing_field: "Missing required field: {field}"
+  invalid_value: "Invalid value for {field}: {value}"
+  invalid_category: "Category not found: {category}"
+  invalid_item: "Invalid item: {item}"
+  invalid_timezone: "Invalid timezone: {timezone}"
+  invalid_schedule: "Invalid schedule: {expression}"
+  empty_category: "Category has no items: {category}"
+  duplicate_delivery: "Duplicate delivery name: {name}"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  WEBHOOK MESSAGES                                                           │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+webhook:
+  # Event start notification
+  start:
+    title: "📦 {delivery} Started!"
+    description: "A new delivery event has started!\n\n**🎯 Required Item:**\n`{item}`\n\n**📁 Category:** {category}\n**⏱️ Duration:** {duration}\n**🏆 Winners:** {winners} players\n\n*Join the server and start delivering!*"
+    color: 65280  # Green (#00FF00)
+    footer: "VeloDelivery • Delivery Event System"
+  
+  # Event end notification
+  end:
+    title: "🏆 {delivery} Ended!"
+    description: "The delivery event has ended!\n\n**📦 Delivered Item:** `{item}`\n**📁 Category:** {category}\n**👥 Participants:** {participants} players\n**📊 Total Deliveries:** {total} items"
+    color: 16766720  # Gold (#FFD700)
+    footer: "VeloDelivery • Delivery Event System"
+    winners_title: "🎖️ Winners"
+    winner_format: "{medal} **{player}** - {count} deliveries"
+    no_winners: "*No participants*"
+  
+  # Medal symbols
+  medals:
+    first: "🥇"
+    second: "🥈"
+    third: "🥉"
+    other: "🏅"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  TIME FORMATS                                                               │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+time:
+  day: "{count} day"
+  days: "{count} days"
+  hour: "{count} hour"
+  hours: "{count} hours"
+  minute: "{count} minute"
+  minutes: "{count} minutes"
+  second: "{count} second"
+  seconds: "{count} seconds"
+  now: "Now"
+  and: "and"
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  MEDAL SYMBOLS                                                              │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+medals:
+  first: "&6&l①"
+  second: "&f&l②"
+  third: "&c&l③"
+  other: "&7{rank}."
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  RANK COLORS                                                                │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+rank_colors:
+  first: "&6"   # Gold
+  second: "&f"  # White
+  third: "&c"   # Red
+  other: "&7"   # Gray

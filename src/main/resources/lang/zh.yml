@@ -1,0 +1,283 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════╗
+# ║                                                                               ║
+# ║                      VeloDelivery - 简体中文语言文件                            ║
+# ║                                                                               ║
+# ║  专业的 Minecraft 服务器交付活动系统                                             ║
+# ║  所有消息支持颜色代码和占位符                                                    ║
+# ║                                                                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════════╝
+
+general:
+  prefix: "&e&lV&6elo&e&lD&6elivery &8»"
+  no_permission: "&c你没有权限使用此命令。"
+  player_only: "&c此命令只能由玩家使用。"
+  unknown_command: "&c未知命令: &f{command}"
+  unknown_command_tip: "&7使用 &e/dc help &7查看可用命令。"
+  console_name: "控制台"
+  enabled: "&aVeloDelivery 已启用！"
+  disabled: "&cVeloDelivery 已禁用！"
+
+command:
+  reload:
+    start: "&7⟳ 正在重新加载配置..."
+    success: "&a✓ 配置重新加载成功！"
+    success_with_warnings: "&e⚠ 加载时有 {count} 个警告。请检查控制台。"
+    failed: "&c✗ 重新加载失败！之前的配置仍然有效。"
+  help:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f帮助菜单"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    basic_header: "&e&l基础命令"
+    cmd_help: "  &e/dc help &8- &7显示此菜单"
+    cmd_version: "  &e/dc version &8- &7显示插件版本"
+    admin_header: "&c&l管理员命令"
+    cmd_reload: "  &e/dc reload &8- &7重新加载配置"
+    cmd_info: "  &e/dc info &8- &7系统信息"
+    cmd_categories: "  &e/dc categories &8- &7列出分类"
+    event_header: "&a&l活动管理"
+    cmd_list: "  &e/dc list &8- &7列出所有交付"
+    cmd_status: "  &e/dc status [名称] &8- &7活动状态"
+    cmd_start: "  &e/dc start <名称> [时长] [获胜者] &8- &7启动活动"
+    cmd_stop: "  &e/dc stop <名称> &8- &7停止活动"
+    cmd_top: "  &e/dc top [名称] &8- &7排行榜"
+    player_header: "&b&l玩家命令"
+    cmd_delivery: "  &e/delivery &8- &7打开交付菜单"
+    cmd_deliver: "  &e/deliver &8- &7从背包交付"
+    tip: "&7管理员: &f/dc&7, 玩家: &f/delivery&7, &f/deliver"
+  version:
+    header: "&6&l  ╔══════════════════════════════╗"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.0   &6&l║"
+    footer: "&6&l  ╚══════════════════════════════╝"
+    description: "&7  定时交付活动系统"
+    description2: "&7  适用于 Minecraft 服务器。"
+    authors: "&7  开发者: &fmusbabaff"
+    api: "&7  API: &fSpigot/Paper 1.16.5+"
+  info:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f系统信息"
+    categories: "  &7分类         &8│ &f{count}"
+    deliveries: "  &7交付         &8│ &f{total} &7(&a{enabled} 已启用&7)"
+    active: "  &7活跃         &8│ &a{count} &7个活动"
+    languages: "  &7语言         &8│ &ftr, en, de, es, fr, ru, zh, pt"
+  list:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f交付列表"
+    empty: "&7  无已定义的交付。"
+    empty_tip: "&7  &o编辑 deliveries.yml 添加交付。"
+    item_running: "  &a▶ &f{name} &a[进行中]"
+    item_ready: "  &e● &f{name} &e[就绪]"
+    item_disabled: "  &c○ &f{name} &c[已禁用]"
+    category: "     &7分类: &f{category} &8({mode})"
+    winners: "     &7获胜者: &f{count} 名玩家"
+    total: "&7  总计: &f{count} &7个交付"
+  status:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f{name}"
+    running: "  &7状态         &8│ &a● 进行中"
+    not_running: "  &7状态         &8│ &c○ 未运行"
+    category: "  &7分类         &8│ &f{category}"
+    item: "  &7物品         &8│ &e{item}"
+    participants: "  &7参与者       &8│ &f{count} 名玩家"
+    deliveries: "  &7交付数       &8│ &f{count} 个"
+    start_time: "  &7开始时间     &8│ &f{time}"
+    end_time: "  &7结束时间     &8│ &f{time}"
+    not_found: "&c✗ 交付未找到: &f{name}"
+    not_active: "&7ℹ 此交付未激活: &f{name}"
+    not_active_tip: "&7  启动: &e/dc start {name}"
+    no_active: "&7ℹ 当前没有活跃的活动。"
+    no_active_tip: "&7  &o启动一个: &e/dc start <名称>"
+  start:
+    usage: "&c✗ 用法: &e/dc start <交付> [时长] [获胜者]"
+    usage_duration: "&7  时长格式: &f1h&7, &f30m&7, &f2h30m"
+    usage_winners: "&7  获胜者: &f1-10 &7(数字)"
+    usage_example: "&7  示例: &e/dc start daily 2h 3"
+    usage_list: "&7  可用交付: &e/dc list"
+    not_found: "&c✗ 交付未找到: &f{name}"
+    already_running: "&c✗ 此活动已在运行: &f{name}"
+    already_running_tip: "&7  查看状态: &e/dc status {name}"
+    invalid_duration: "&c✗ 无效的时长格式: &f{duration}"
+    invalid_duration_tip: "&7  示例: &f1h&7, &f30m&7, &f2h30m"
+    invalid_winners: "&c✗ 获胜者数量必须在 1-10 之间: &f{count}"
+    failed: "&c✗ 活动启动失败！"
+    failed_tip: "&7  无法解析分类或物品。"
+    success: "&a✓ 活动已启动！"
+    success_delivery: "  &7交付         &8│ &f{name}"
+    success_category: "  &7分类         &8│ &f{category}"
+    success_item: "  &7物品         &8│ &e{item}"
+    success_duration: "  &7时长         &8│ &f{duration}"
+    success_winners: "  &7获胜者       &8│ &f{count} 名玩家"
+  stop:
+    usage: "&c✗ 用法: &e/dc stop <交付>"
+    usage_tip: "&7  活跃活动: &e/dc status"
+    not_found: "&c✗ 此活动未激活: &f{name}"
+    success: "&c■ 活动已停止: &f{name}"
+    winners_header: "&7获胜者:"
+    winner_format: "  {medal} &f{player} &7- &e{count} 次交付"
+    no_winners: "&7  无获胜者 - 无人交付。"
+  top:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  排行榜 &8│ &f{item}"
+    empty: "&7  暂无交付记录。"
+    entry: "  {medal} &f{player} &8- &e{count} &7次交付"
+    total: "&7  总计: &f{count} &7次交付"
+    no_active: "&7ℹ 没有活跃的活动。"
+  categories:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  VeloDelivery &8│ &f分类列表"
+    empty: "&7  无已定义的分类。"
+    empty_tip: "&7  &o请检查 categories.yml 文件。"
+    item: "  &e▸ &f{name} &8(&7{count} 个物品&8)"
+    total: "&7  总计: &f{count} &7个分类"
+
+event:
+  start:
+    broadcast: "&a{delivery} &7已开始！ &e需要: &f{item}"
+    title: "&a&l{delivery}"
+    subtitle: "&7需要: &e{item}"
+  end:
+    broadcast: "&c{delivery} &7已结束！"
+    winners_header: "&6获胜者:"
+    winner_format: "  {color}{rank}. &f{player} &8- &e{count} &7次交付"
+    no_winners: "&7  无获胜者 - 无人交付。"
+    title: "&c&l活动已结束！"
+    subtitle: "&7{delivery}"
+  active:
+    info: "&7活跃: &f{delivery}"
+    item: "&7物品: &e{item}"
+    category: "&7分类: &f{category}"
+    remaining: "&7剩余: &f{time}"
+    participants: "&7参与者: &f{count}"
+  none:
+    message: "&7当前没有活跃的交付活动。"
+    tip: "&7稍后再来或等待定时活动。"
+
+delivery:
+  success:
+    title: "&a&l已交付！"
+    subtitle: "&e{amount} &7x &f{item}"
+    message: "&a{amount} &7x &e{item} &7已交付！"
+    stats: "&7总计: &f{total} &8| &7排名: &e#{rank}"
+  chest:
+    prompt: "&a右键点击一个箱子！ &7(10 秒)"
+    success: "&a{amount} &7x &e{item} &7已从箱子中交付！"
+    not_chest: "&c这不是箱子！"
+    empty: "&c箱子里没有 &e{item}&c！"
+    timeout: "&c箱子选择已超时。"
+  inventory:
+    empty: "&c背包中没有 &e{item}&c！"
+  error:
+    no_active: "&c没有活跃的交付活动！"
+    invalid_item: "&c无效物品: &f{item}"
+    not_started: "&c此交付尚未开始！"
+
+reward:
+  received:
+    item: "&a&l✦ 奖励 &r&7获得: &f{amount}x {item}&7！"
+    command: "&a&l✦ 奖励 &r&7奖励命令已执行！"
+    both: "&a&l✦ 奖励 &r&7获得: &f{amount}x {item} &7+ 额外奖励！"
+  pending:
+    has_pending: "&e你有待领取的奖励！即将发放。"
+    delivered: "&a你的待领取奖励已发放！"
+    none: "&7你没有待领取的奖励。"
+  inventory_full: "&e背包已满！奖励已保存，稍后发放。"
+
+gui:
+  main:
+    title: "交付菜单"
+    active_delivery: "&a{name}"
+    waiting_delivery: "&7{name}"
+    leaderboard: "&b排行榜"
+    leaderboard_lore: "&7查看顶级交付者"
+    help: "&f帮助"
+    help_lore: "&7了解系统说明"
+  detail:
+    title: "交付: {name}"
+    info: "&e{name}"
+    required_item: "&7需要的物品"
+    category: "&7分类: &f{category}"
+    total_deliveries: "&7总交付数: &e{count}"
+    your_deliveries: "&7你的交付数: &a{count}"
+    your_rank: "&7你的排名: &e#{rank}"
+    deliver_inventory: "&a从背包交付"
+    deliver_inventory_lore: "&7交付背包中所有的 {item}"
+    deliver_chest: "&6从箱子交付"
+    deliver_chest_lore: "&7右键点击箱子进行交付"
+    deliver_chest_time: "&e10 秒选择时间"
+    back: "&c返回"
+    back_lore: "&7返回主菜单"
+  leaderboard:
+    title: "排行榜"
+    no_active: "&7无活跃活动"
+    no_active_lore: "&8等待交付活动"
+    entry: "{color}#{rank} {player}"
+    entry_lore: "&7交付数: &e{count}"
+    back: "&c返回"
+    back_lore: "&7返回主菜单"
+  waiting:
+    status: "&8等待中"
+    start_time: "&7开始: &e{time}"
+    not_started: "&8尚未开始"
+
+error:
+  config_load: "&c配置错误: &f{error}"
+  event_start: "&c活动启动失败: &f{error}"
+  event_end: "&c活动结束失败: &f{error}"
+  reward_give: "&c奖励发放失败: &f{error}"
+  webhook_send: "&cWebhook 错误: &f{error}"
+  invalid_player: "&c无效玩家: &f{player}"
+  database: "&c发生数据库错误。"
+  internal: "&c发生内部错误。"
+
+validation:
+  missing_field: "缺少必填字段: {field}"
+  invalid_value: "{field} 值无效: {value}"
+  invalid_category: "分类未找到: {category}"
+  invalid_item: "无效物品: {item}"
+  invalid_timezone: "无效时区: {timezone}"
+  invalid_schedule: "无效排程: {expression}"
+  empty_category: "分类为空: {category}"
+  duplicate_delivery: "重复的交付名称: {name}"
+
+webhook:
+  start:
+    title: "📦 {delivery} 已开始！"
+    description: "新的交付活动已开始！\\n\\n**🎯 需要的物品:**\\n`{item}`\\n\\n**📁 分类:** {category}\\n**⏱️ 时长:** {duration}\\n**🏆 获胜者:** {winners} 名玩家\\n\\n*加入服务器开始交付吧！*"
+    color: 65280
+    footer: "VeloDelivery • 交付活动系统"
+  end:
+    title: "🏆 {delivery} 已结束！"
+    description: "交付活动已结束！\\n\\n**📦 已交付物品:** `{item}`\\n**📁 分类:** {category}\\n**👥 参与者:** {participants} 名玩家\\n**📊 总交付:** {total} 个"
+    color: 16766720
+    footer: "VeloDelivery • 交付活动系统"
+    winners_title: "🎖️ 获胜者"
+    winner_format: "{medal} **{player}** - {count} 次交付"
+    no_winners: "*无参与者*"
+  medals:
+    first: "🥇"
+    second: "🥈"
+    third: "🥉"
+    other: "🏅"
+
+time:
+  day: "{count} 天"
+  days: "{count} 天"
+  hour: "{count} 小时"
+  hours: "{count} 小时"
+  minute: "{count} 分钟"
+  minutes: "{count} 分钟"
+  second: "{count} 秒"
+  seconds: "{count} 秒"
+  now: "现在"
+  and: "和"
+
+medals:
+  first: "&6&l①"
+  second: "&f&l②"
+  third: "&c&l③"
+  other: "&7{rank}."
+
+rank_colors:
+  first: "&6"
+  second: "&f"
+  third: "&c"
+  other: "&7"
