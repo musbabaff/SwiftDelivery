@@ -15,14 +15,15 @@ import java.util.logging.Logger;
 
 public class DeliveryServiceImpl implements DeliveryService {
 
-    private static final Logger LOGGER = Logger.getLogger(DeliveryServiceImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger("VeloDelivery");
 
     private final DeliveryConfig deliveryConfig;
     private final CategoryService categoryService;
     private final SchedulerService schedulerService;
     private final Map<String, ActiveEvent> activeEvents = new ConcurrentHashMap<>();
 
-    public DeliveryServiceImpl(DeliveryConfig deliveryConfig, CategoryService categoryService, SchedulerService schedulerService) {
+    public DeliveryServiceImpl(DeliveryConfig deliveryConfig, CategoryService categoryService,
+            SchedulerService schedulerService) {
         this.deliveryConfig = deliveryConfig;
         this.categoryService = categoryService;
         this.schedulerService = schedulerService;
@@ -61,7 +62,8 @@ public class DeliveryServiceImpl implements DeliveryService {
             }
 
             ZonedDateTime now = ZonedDateTime.now(def.timezone());
-            ZonedDateTime endTime = schedulerService.getNextOccurrence(def.schedule().end(), def.timezone()).orElse(now.plusHours(1));
+            ZonedDateTime endTime = schedulerService.getNextOccurrence(def.schedule().end(), def.timezone())
+                    .orElse(now.plusHours(1));
 
             ActiveEvent event = new ActiveEvent(deliveryName, category.name(), item, now, endTime, def.timezone());
             activeEvents.put(deliveryName, event);
@@ -76,7 +78,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public List<Winner> endEvent(String deliveryName) {
         ActiveEvent event = activeEvents.remove(deliveryName);
-        if (event == null) return List.of();
+        if (event == null)
+            return List.of();
 
         if (schedulerService != null) {
             schedulerService.cancelScheduledEvent(deliveryName);
@@ -102,11 +105,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public boolean recordDelivery(UUID playerUuid, String deliveryName, int amount) {
         ActiveEvent event = activeEvents.get(deliveryName);
-        if (event == null || !event.isActive()) return false;
+        if (event == null || !event.isActive())
+            return false;
 
         Player player = Bukkit.getPlayer(playerUuid);
         if (player != null) {
-            DeliveryDeliverEvent deliverEvent = new DeliveryDeliverEvent(player, deliveryName, event.getResolvedItem(), amount);
+            DeliveryDeliverEvent deliverEvent = new DeliveryDeliverEvent(player, deliveryName, event.getResolvedItem(),
+                    amount);
             Bukkit.getPluginManager().callEvent(deliverEvent);
 
             if (deliverEvent.isCancelled()) {
@@ -141,7 +146,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public List<Winner> calculateWinners(ActiveEvent event, int winnerCount, PlayerNameResolver nameResolver) {
         Map<UUID, Integer> deliveries = event.getPlayerDeliveries();
-        if (deliveries.isEmpty()) return List.of();
+        if (deliveries.isEmpty())
+            return List.of();
 
         List<Map.Entry<UUID, Integer>> sorted = deliveries.entrySet().stream()
                 .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())

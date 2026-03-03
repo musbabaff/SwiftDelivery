@@ -22,30 +22,30 @@ import java.util.logging.Logger;
  * ═══════════════════════════════════════════════════════════════
  * 
  * TEMEL:
- *   /dc help                    - Yardım menüsü
- *   /dc version                 - Sürüm bilgisi
+ * /dc help - Yardım menüsü
+ * /dc version - Sürüm bilgisi
  * 
  * YÖNETİM:
- *   /dc reload                  - Konfigürasyonu yeniden yükle
- *   /dc info                    - Sistem bilgisi
+ * /dc reload - Konfigürasyonu yeniden yükle
+ * /dc info - Sistem bilgisi
  * 
  * ETKİNLİK:
- *   /dc list                    - Tüm teslimatları listele
- *   /dc status [teslimat]       - Aktif etkinlik durumu
- *   /dc start <teslimat>        - Manuel etkinlik başlat
- *   /dc stop <teslimat>         - Etkinliği durdur
- *   /dc top [teslimat]          - Sıralama tablosu
+ * /dc list - Tüm teslimatları listele
+ * /dc status [teslimat] - Aktif etkinlik durumu
+ * /dc start <teslimat> - Manuel etkinlik başlat
+ * /dc stop <teslimat> - Etkinliği durdur
+ * /dc top [teslimat] - Sıralama tablosu
  * 
  * ═══════════════════════════════════════════════════════════════
  * YETKİLER:
  * ═══════════════════════════════════════════════════════════════
- *   velodelivery.*              - Tüm yetkiler
- *   velodelivery.admin          - Tüm admin yetkileri
- *   velodelivery.admin.reload   - Reload komutu
- *   velodelivery.admin.info     - Info komutu
- *   velodelivery.admin.event    - Etkinlik yönetimi
- *   velodelivery.use            - Temel komutlar
- *   velodelivery.participate    - Etkinliklere katılım
+ * velodelivery.* - Tüm yetkiler
+ * velodelivery.admin - Tüm admin yetkileri
+ * velodelivery.admin.reload - Reload komutu
+ * velodelivery.admin.info - Info komutu
+ * velodelivery.admin.event - Etkinlik yönetimi
+ * velodelivery.use - Temel komutlar
+ * velodelivery.participate - Etkinliklere katılım
  */
 public class CommandHandler {
 
@@ -84,8 +84,9 @@ public class CommandHandler {
     }
 
     public CommandHandler(ConfigManager configManager) {
-        this(configManager, (p, perm) -> true, (p, m) -> {}, 
-             Logger.getLogger(CommandHandler.class.getName()));
+        this(configManager, (p, perm) -> true, (p, m) -> {
+        },
+                Logger.getLogger("VeloDelivery"));
     }
 
     public void setDeliveryService(DeliveryService deliveryService) {
@@ -114,8 +115,14 @@ public class CommandHandler {
         String[] subArgs = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0];
 
         return switch (sub) {
-            case "help", "?", "h", "yardim" -> { sendHelp(sender); yield true; }
-            case "version", "ver", "v", "surum" -> { sendVersion(sender); yield true; }
+            case "help", "?", "h", "yardim" -> {
+                sendHelp(sender);
+                yield true;
+            }
+            case "version", "ver", "v", "surum" -> {
+                sendVersion(sender);
+                yield true;
+            }
             case "reload", "rl", "yenile" -> handleReload(sender);
             case "info", "i", "bilgi" -> handleInfo(sender);
             case "list", "ls", "liste" -> handleList(sender);
@@ -140,8 +147,9 @@ public class CommandHandler {
     public List<String> handleTabComplete(String sender, String[] args) {
         if (args.length == 1) {
             List<String> completions = new ArrayList<>(Arrays.asList("help", "version"));
-            
-            if (hasPerm(sender, PERM_ADMIN_RELOAD)) completions.add("reload");
+
+            if (hasPerm(sender, PERM_ADMIN_RELOAD))
+                completions.add("reload");
             if (hasPerm(sender, PERM_ADMIN_INFO)) {
                 completions.add("info");
                 completions.add("categories");
@@ -149,7 +157,7 @@ public class CommandHandler {
             if (hasPerm(sender, PERM_ADMIN_EVENT)) {
                 completions.addAll(Arrays.asList("list", "status", "start", "stop", "top", "toggle", "test"));
             }
-            
+
             return filter(completions, args[0]);
         }
 
@@ -165,19 +173,19 @@ public class CommandHandler {
                 return filter(Arrays.asList("deliver", "reward", "webhook"), args[1]);
             }
         }
-        
+
         // Start komutu için süre önerileri
         if (args.length == 3 && args[0].equalsIgnoreCase("start") && hasPerm(sender, PERM_ADMIN_EVENT)) {
             return filter(Arrays.asList("30m", "1h", "2h", "3h", "1h30m", "2h30m"), args[2]);
         }
-        
+
         // Start komutu için kazanan sayısı önerileri
         if (args.length == 4 && args[0].equalsIgnoreCase("start") && hasPerm(sender, PERM_ADMIN_EVENT)) {
             return filter(Arrays.asList("1", "2", "3", "5", "10"), args[3]);
         }
 
-        if (args.length == 3 && args[0].equalsIgnoreCase("test") && 
-            args[1].equalsIgnoreCase("deliver") && hasPerm(sender, PERM_ADMIN_EVENT)) {
+        if (args.length == 3 && args[0].equalsIgnoreCase("test") &&
+                args[1].equalsIgnoreCase("deliver") && hasPerm(sender, PERM_ADMIN_EVENT)) {
             return filter(getDeliveryNames(), args[2]);
         }
 
@@ -216,7 +224,7 @@ public class CommandHandler {
                     logger.warning("Reload callback hatası: " + e.getMessage());
                 }
             }
-            
+
             if (result.hasErrors()) {
                 msg(sender, "&e⚠ " + result.errors().size() + " uyarı ile yüklendi");
                 logErrors(result.errors());
@@ -278,15 +286,14 @@ public class CommandHandler {
             for (var entry : deliveries.entrySet()) {
                 String name = entry.getKey();
                 DeliveryDefinition def = entry.getValue();
-                boolean running = deliveryService != null && 
-                                  deliveryService.getActiveEvent(name).isPresent();
+                boolean running = deliveryService != null &&
+                        deliveryService.getActiveEvent(name).isPresent();
 
                 String icon = running ? "&a▶" : (def.enabled() ? "&e●" : "&c○");
-                String status = running ? "&a[ÇALIŞIYOR]" : 
-                               (def.enabled() ? "&e[HAZIR]" : "&c[KAPALI]");
+                String status = running ? "&a[ÇALIŞIYOR]" : (def.enabled() ? "&e[HAZIR]" : "&c[KAPALI]");
 
                 msg(sender, "  " + icon + " &f" + name + " " + status);
-                
+
                 String catMode = def.category().mode().name();
                 String catVal = def.category().value() != null ? def.category().value() : "rastgele";
                 msg(sender, "     &7Kategori: &f" + catVal + " &8(" + catMode.toLowerCase() + ")");
@@ -336,7 +343,7 @@ public class CommandHandler {
                 msg(sender, "     &7Kategori: &f" + e.getResolvedCategory());
                 msg(sender, "     &7Katılımcı: &f" + e.getPlayerDeliveries().size());
                 msg(sender, "     &7Toplam Teslimat: &f" + e.getTotalDeliveries());
-                
+
                 if (e.getEndTime() != null) {
                     String endStr = e.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"));
                     msg(sender, "     &7Bitiş: &f" + endStr);
@@ -374,7 +381,7 @@ public class CommandHandler {
         msg(sender, "  &7Eşya         &8│ &e" + e.getResolvedItem());
         msg(sender, "  &7Katılımcı    &8│ &f" + e.getPlayerDeliveries().size() + " kişi");
         msg(sender, "  &7Teslimat     &8│ &f" + e.getTotalDeliveries() + " adet");
-        
+
         if (e.getStartTime() != null) {
             String startStr = e.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             msg(sender, "  &7Başlangıç    &8│ &f" + startStr);
@@ -414,7 +421,7 @@ public class CommandHandler {
         }
 
         String name = args[0];
-        
+
         // Süre parametresi (opsiyonel)
         long durationMinutes = 60; // Varsayılan 1 saat
         if (args.length >= 2) {
@@ -425,7 +432,7 @@ public class CommandHandler {
                 return true;
             }
         }
-        
+
         // Kazanan sayısı parametresi (opsiyonel)
         int winnerCount = -1; // -1 = config'den al
         if (args.length >= 3) {
@@ -461,18 +468,18 @@ public class CommandHandler {
         if (eventOpt.isPresent()) {
             ActiveEvent e = eventOpt.get();
             DeliveryDefinition def = defOpt.get();
-            
+
             // Bitiş zamanını ayarla
             ZonedDateTime endTime = ZonedDateTime.now().plusMinutes(durationMinutes);
             e.setEndTime(endTime);
-            
+
             // Kazanan sayısını ayarla (override veya config'den)
             int finalWinnerCount = winnerCount > 0 ? winnerCount : def.winnerCount();
             e.setWinnerCount(finalWinnerCount);
-            
+
             // Otomatik bitiş için zamanlayıcı
             scheduleManualEventEnd(name, durationMinutes);
-            
+
             String durationStr = formatDuration(durationMinutes);
 
             msg(sender, "");
@@ -485,8 +492,9 @@ public class CommandHandler {
             msg(sender, "  &7Kazanan     &8│ &f" + finalWinnerCount + " kişi");
             msg(sender, "");
 
-            logger.info("[VeloDelivery] " + sender + " etkinliği başlattı: " + name + 
-                       " (Eşya: " + e.getResolvedItem() + ", Süre: " + durationStr + ", Kazanan: " + finalWinnerCount + ")");
+            logger.info("[VeloDelivery] " + sender + " etkinliği başlattı: " + name +
+                    " (Eşya: " + e.getResolvedItem() + ", Süre: " + durationStr + ", Kazanan: " + finalWinnerCount
+                    + ")");
         } else {
             msg(sender, "&c✗ Etkinlik başlatılamadı!");
             msg(sender, "&7  Kategori veya eşya bulunamadı.");
@@ -650,7 +658,7 @@ public class CommandHandler {
                 String name = entry.getKey();
                 var category = entry.getValue();
                 int itemCount = category.items() != null ? category.items().size() : 0;
-                
+
                 msg(sender, "  &e▸ &f" + name + " &8(&7" + itemCount + " eşya&8)");
             }
         }
@@ -749,9 +757,9 @@ public class CommandHandler {
             }
         };
     }
-    
+
     private Runnable webhookTester;
-    
+
     public void setWebhookTester(Runnable tester) {
         this.webhookTester = tester;
     }
@@ -796,14 +804,14 @@ public class CommandHandler {
 
         // Admin komutları
         boolean hasAdmin = hasPerm(sender, PERM_ADMIN) ||
-                          hasPerm(sender, PERM_ADMIN_RELOAD) ||
-                          hasPerm(sender, PERM_ADMIN_INFO) ||
-                          hasPerm(sender, PERM_ADMIN_EVENT);
+                hasPerm(sender, PERM_ADMIN_RELOAD) ||
+                hasPerm(sender, PERM_ADMIN_INFO) ||
+                hasPerm(sender, PERM_ADMIN_EVENT);
 
         if (hasAdmin) {
             msg(sender, "");
             msg(sender, "&c&lYönetim");
-            
+
             if (hasPerm(sender, PERM_ADMIN_RELOAD)) {
                 msg(sender, "  &e/dc reload &8- &7Konfigürasyonu yenile");
             }
@@ -880,47 +888,49 @@ public class CommandHandler {
     }
 
     private boolean hasPerm(String player, String permission) {
-        if (player == null || player.isEmpty()) return false;
+        if (player == null || player.isEmpty())
+            return false;
         return permissionChecker.apply(player, permission);
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // SÜRE YARDIMCI METODLARI
     // ═══════════════════════════════════════════════════════════════
-    
+
     /**
      * Süre string'ini dakikaya çevirir.
      * Formatlar: 1h, 30m, 2h30m, 90
      */
     private long parseDuration(String duration) {
-        if (duration == null || duration.isEmpty()) return -1;
-        
+        if (duration == null || duration.isEmpty())
+            return -1;
+
         duration = duration.toLowerCase().trim();
         long totalMinutes = 0;
-        
+
         try {
             // Sadece sayı ise dakika olarak al
             if (duration.matches("\\d+")) {
                 return Long.parseLong(duration);
             }
-            
+
             // Saat ve dakika parse et
             java.util.regex.Matcher hourMatcher = java.util.regex.Pattern.compile("(\\d+)h").matcher(duration);
             java.util.regex.Matcher minMatcher = java.util.regex.Pattern.compile("(\\d+)m").matcher(duration);
-            
+
             if (hourMatcher.find()) {
                 totalMinutes += Long.parseLong(hourMatcher.group(1)) * 60;
             }
             if (minMatcher.find()) {
                 totalMinutes += Long.parseLong(minMatcher.group(1));
             }
-            
+
             return totalMinutes > 0 ? totalMinutes : -1;
         } catch (Exception e) {
             return -1;
         }
     }
-    
+
     /**
      * Dakikayı okunabilir formata çevirir.
      */
@@ -935,24 +945,25 @@ public class CommandHandler {
         }
         return hours + " saat " + mins + " dakika";
     }
-    
+
     /**
      * Manuel başlatılan etkinlik için otomatik bitiş zamanlayıcısı.
      */
     private void scheduleManualEventEnd(String deliveryName, long durationMinutes) {
         if (manualEndScheduler != null) {
             manualEndScheduler.accept(deliveryName, durationMinutes);
-            logger.info("[VeloDelivery] Etkinlik " + durationMinutes + " dakika sonra otomatik bitecek: " + deliveryName);
+            logger.info(
+                    "[VeloDelivery] Etkinlik " + durationMinutes + " dakika sonra otomatik bitecek: " + deliveryName);
         } else {
             logger.warning("[VeloDelivery] Manuel bitiş zamanlayıcısı ayarlanmamış: " + deliveryName);
         }
     }
-    
+
     /**
      * Manuel bitiş zamanlayıcısı için callback setter.
      */
     private java.util.function.BiConsumer<String, Long> manualEndScheduler;
-    
+
     public void setManualEndScheduler(java.util.function.BiConsumer<String, Long> scheduler) {
         this.manualEndScheduler = scheduler;
     }
@@ -970,10 +981,27 @@ public class CommandHandler {
     // ═══════════════════════════════════════════════════════════════
     // GETTER METODLARI
     // ═══════════════════════════════════════════════════════════════
-    public static String getAdminPermission() { return PERM_ADMIN; }
-    public static String getReloadPermission() { return PERM_ADMIN_RELOAD; }
-    public static String getInfoPermission() { return PERM_ADMIN_INFO; }
-    public static String getEventPermission() { return PERM_ADMIN_EVENT; }
-    public static String getUsePermission() { return PERM_USE; }
-    public static String getParticipatePermission() { return PERM_PARTICIPATE; }
+    public static String getAdminPermission() {
+        return PERM_ADMIN;
+    }
+
+    public static String getReloadPermission() {
+        return PERM_ADMIN_RELOAD;
+    }
+
+    public static String getInfoPermission() {
+        return PERM_ADMIN_INFO;
+    }
+
+    public static String getEventPermission() {
+        return PERM_ADMIN_EVENT;
+    }
+
+    public static String getUsePermission() {
+        return PERM_USE;
+    }
+
+    public static String getParticipatePermission() {
+        return PERM_PARTICIPATE;
+    }
 }

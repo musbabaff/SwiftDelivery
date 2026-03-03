@@ -28,31 +28,29 @@ import java.util.regex.Pattern;
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 public class SchedulerServiceImpl implements SchedulerService {
-    
-    private static final Logger LOGGER = Logger.getLogger(SchedulerServiceImpl.class.getName());
-    
+
+    private static final Logger LOGGER = Logger.getLogger("VeloDelivery");
+
     // Pattern: "every <day> HH:mm" or "every day HH:mm"
     private static final Pattern SCHEDULE_PATTERN = Pattern.compile(
-        "^every\\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday|day)\\s+(\\d{1,2}):(\\d{2})$",
-        Pattern.CASE_INSENSITIVE
-    );
-    
+            "^every\\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday|day)\\s+(\\d{1,2}):(\\d{2})$",
+            Pattern.CASE_INSENSITIVE);
+
     private static final Map<String, DayOfWeek> DAY_MAP = Map.of(
-        "monday", DayOfWeek.MONDAY,
-        "tuesday", DayOfWeek.TUESDAY,
-        "wednesday", DayOfWeek.WEDNESDAY,
-        "thursday", DayOfWeek.THURSDAY,
-        "friday", DayOfWeek.FRIDAY,
-        "saturday", DayOfWeek.SATURDAY,
-        "sunday", DayOfWeek.SUNDAY
-    );
-    
+            "monday", DayOfWeek.MONDAY,
+            "tuesday", DayOfWeek.TUESDAY,
+            "wednesday", DayOfWeek.WEDNESDAY,
+            "thursday", DayOfWeek.THURSDAY,
+            "friday", DayOfWeek.FRIDAY,
+            "saturday", DayOfWeek.SATURDAY,
+            "sunday", DayOfWeek.SUNDAY);
+
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new HashMap<>();
     private final Map<String, ScheduledEventInfo> scheduledEventInfos = new ConcurrentHashMap<>();
     private final ScheduledExecutorService executor;
     private Consumer<String> eventStartCallback;
     private Consumer<String> eventEndCallback;
-    
+
     /**
      * Creates a new SchedulerServiceImpl.
      *
@@ -61,14 +59,14 @@ public class SchedulerServiceImpl implements SchedulerService {
     public SchedulerServiceImpl(ScheduledExecutorService executor) {
         this.executor = executor;
     }
-    
+
     /**
      * Creates a SchedulerServiceImpl without an executor (for parsing only).
      */
     public SchedulerServiceImpl() {
         this.executor = null;
     }
-    
+
     /**
      * Sets the callback to be invoked when an event should start.
      *
@@ -77,7 +75,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     public void setEventStartCallback(Consumer<String> callback) {
         this.eventStartCallback = callback;
     }
-    
+
     /**
      * Sets the callback to be invoked when an event should end.
      *
@@ -93,46 +91,43 @@ public class SchedulerServiceImpl implements SchedulerService {
             LOGGER.warning("No executor configured, cannot schedule events");
             return;
         }
-        
+
         // Cancel any existing schedule for this delivery
         cancelScheduledEvent(delivery.name());
-        
+
         // Parse and schedule start time
         Optional<ZonedDateTime> nextStart = getNextOccurrence(
-            delivery.schedule().start(), 
-            delivery.timezone()
-        );
-        
+                delivery.schedule().start(),
+                delivery.timezone());
+
         if (nextStart.isEmpty()) {
             LOGGER.warning("Invalid start schedule for delivery: " + delivery.name());
             return;
         }
-        
+
         // Parse end time
         Optional<ZonedDateTime> nextEnd = getNextOccurrence(
-            delivery.schedule().end(),
-            delivery.timezone()
-        );
-        
+                delivery.schedule().end(),
+                delivery.timezone());
+
         if (nextEnd.isEmpty()) {
             LOGGER.warning("Invalid end schedule for delivery: " + delivery.name());
             return;
         }
-        
+
         // Store scheduled event info for resumption
         ScheduledEventInfo info = new ScheduledEventInfo(
-            delivery.name(),
-            nextStart.get(),
-            nextEnd.get(),
-            delivery.timezone()
-        );
+                delivery.name(),
+                nextStart.get(),
+                nextEnd.get(),
+                delivery.timezone());
         scheduledEventInfos.put(delivery.name(), info);
-        
+
         // Calculate delay until start
         ZonedDateTime now = ZonedDateTime.now(delivery.timezone());
         long startDelayMs = java.time.Duration.between(now, nextStart.get()).toMillis();
         long endDelayMs = java.time.Duration.between(now, nextEnd.get()).toMillis();
-        
+
         // Eğer şu an etkinlik zamanı içindeyse hemen başlat
         if (startDelayMs <= 0 && endDelayMs > 0) {
             LOGGER.info("Event '" + delivery.name() + "' is currently active, starting now!");
@@ -146,10 +141,10 @@ public class SchedulerServiceImpl implements SchedulerService {
             LOGGER.info("Scheduling '" + delivery.name() + "' to start in " + (startDelayMs / 1000 / 60) + " minutes");
             scheduleStartTask(delivery, startDelayMs, endDelayMs - startDelayMs);
         }
-        
+
         LOGGER.info("Scheduled delivery '" + delivery.name() + "' for " + nextStart.get() + " to " + nextEnd.get());
     }
-    
+
     private void scheduleStartTask(DeliveryDefinition delivery, long startDelayMs, long durationMs) {
         ScheduledFuture<?> startTask = executor.schedule(() -> {
             LOGGER.info("Starting scheduled event: " + delivery.name());
@@ -159,12 +154,13 @@ public class SchedulerServiceImpl implements SchedulerService {
             // Bitiş zamanını planla
             scheduleEndTask(delivery.name(), durationMs);
             // Bir sonraki günü planla
-            executor.schedule(() -> scheduleEvent(delivery), durationMs + 1000, java.util.concurrent.TimeUnit.MILLISECONDS);
+            executor.schedule(() -> scheduleEvent(delivery), durationMs + 1000,
+                    java.util.concurrent.TimeUnit.MILLISECONDS);
         }, startDelayMs, java.util.concurrent.TimeUnit.MILLISECONDS);
-        
+
         scheduledTasks.put(delivery.name() + "_start", startTask);
     }
-    
+
     private void scheduleEndTask(String deliveryName, long delayMs) {
         ScheduledFuture<?> endTask = executor.schedule(() -> {
             LOGGER.info("Ending scheduled event: " + deliveryName);
@@ -172,10 +168,10 @@ public class SchedulerServiceImpl implements SchedulerService {
                 eventEndCallback.accept(deliveryName);
             }
         }, delayMs, java.util.concurrent.TimeUnit.MILLISECONDS);
-        
+
         scheduledTasks.put(deliveryName + "_end", endTask);
     }
-    
+
     @Override
     public void cancelScheduledEvent(String deliveryName) {
         // Start task'ı iptal et
@@ -184,48 +180,48 @@ public class SchedulerServiceImpl implements SchedulerService {
             startTask.cancel(false);
             LOGGER.info("Cancelled start task for: " + deliveryName);
         }
-        
+
         // End task'ı iptal et
         ScheduledFuture<?> endTask = scheduledTasks.remove(deliveryName + "_end");
         if (endTask != null) {
             endTask.cancel(false);
             LOGGER.info("Cancelled end task for: " + deliveryName);
         }
-        
+
         // Eski format için de kontrol et
         ScheduledFuture<?> task = scheduledTasks.remove(deliveryName);
         if (task != null) {
             task.cancel(false);
         }
-        
+
         scheduledEventInfos.remove(deliveryName);
         LOGGER.info("Cancelled all scheduled tasks for delivery: " + deliveryName);
     }
-    
+
     @Override
     public Optional<ZonedDateTime> parseScheduleExpression(String expression, ZoneId timezone) {
         if (expression == null || expression.isBlank() || timezone == null) {
             return Optional.empty();
         }
-        
+
         Matcher matcher = SCHEDULE_PATTERN.matcher(expression.trim().toLowerCase());
         if (!matcher.matches()) {
             return Optional.empty();
         }
-        
+
         String dayPart = matcher.group(1);
         int hour = Integer.parseInt(matcher.group(2));
         int minute = Integer.parseInt(matcher.group(3));
-        
+
         // Validate time values
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
             return Optional.empty();
         }
-        
+
         LocalTime time = LocalTime.of(hour, minute);
         ZonedDateTime now = ZonedDateTime.now(timezone);
         ZonedDateTime result;
-        
+
         if ("day".equals(dayPart)) {
             // Every day at specified time
             result = now.with(time);
@@ -240,15 +236,15 @@ public class SchedulerServiceImpl implements SchedulerService {
                 result = now.with(TemporalAdjusters.next(targetDay)).with(time);
             }
         }
-        
+
         return Optional.of(result);
     }
-    
+
     @Override
     public Optional<ZonedDateTime> getNextOccurrence(String expression, ZoneId timezone) {
         return parseScheduleExpression(expression, timezone);
     }
-    
+
     /**
      * Resumes any active events after server restart.
      * Checks scheduled event info to determine if any events should be active.
@@ -258,20 +254,20 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public void resumeActiveEvents() {
         LOGGER.info("Checking for active events to resume...");
-        
+
         List<String> eventsToResume = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now();
-        
+
         for (ScheduledEventInfo info : scheduledEventInfos.values()) {
             ZonedDateTime nowInTimezone = now.withZoneSameInstant(info.timezone());
-            
+
             // Check if we're currently within an event window
             if (isWithinEventWindow(info, nowInTimezone)) {
                 eventsToResume.add(info.deliveryName());
                 LOGGER.info("Found active event to resume: " + info.deliveryName());
             }
         }
-        
+
         // Trigger start callbacks for events that should be active
         if (eventStartCallback != null) {
             for (String deliveryName : eventsToResume) {
@@ -283,10 +279,10 @@ public class SchedulerServiceImpl implements SchedulerService {
                 }
             }
         }
-        
+
         LOGGER.info("Event resumption check complete. Resumed " + eventsToResume.size() + " event(s).");
     }
-    
+
     /**
      * Checks if the current time is within an event window.
      *
@@ -295,38 +291,39 @@ public class SchedulerServiceImpl implements SchedulerService {
      * @return true if the event should be active
      */
     private boolean isWithinEventWindow(ScheduledEventInfo info, ZonedDateTime now) {
-        // For recurring events, we need to check if we're between start and end times today
+        // For recurring events, we need to check if we're between start and end times
+        // today
         ZonedDateTime startTime = info.scheduledStart();
         ZonedDateTime endTime = info.scheduledEnd();
-        
+
         // If end time is before start time, the event spans midnight
         if (endTime.isBefore(startTime)) {
             // Event spans midnight - check if we're after start OR before end
             return !now.isBefore(startTime) || now.isBefore(endTime);
         }
-        
+
         // Normal case - check if we're between start and end
         return !now.isBefore(startTime) && now.isBefore(endTime);
     }
-    
+
     @Override
     public boolean isValidExpression(String expression) {
         if (expression == null || expression.isBlank()) {
             return false;
         }
-        
+
         Matcher matcher = SCHEDULE_PATTERN.matcher(expression.trim().toLowerCase());
         if (!matcher.matches()) {
             return false;
         }
-        
+
         // Also validate time values
         int hour = Integer.parseInt(matcher.group(2));
         int minute = Integer.parseInt(matcher.group(3));
-        
+
         return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
     }
-    
+
     /**
      * Gets all scheduled event infos.
      *
@@ -335,14 +332,14 @@ public class SchedulerServiceImpl implements SchedulerService {
     public Map<String, ScheduledEventInfo> getScheduledEventInfos() {
         return Map.copyOf(scheduledEventInfos);
     }
-    
+
     /**
      * Information about a scheduled event for resumption purposes.
      */
     public record ScheduledEventInfo(
-        String deliveryName,
-        ZonedDateTime scheduledStart,
-        ZonedDateTime scheduledEnd,
-        ZoneId timezone
-    ) {}
+            String deliveryName,
+            ZonedDateTime scheduledStart,
+            ZonedDateTime scheduledEnd,
+            ZoneId timezone) {
+    }
 }

@@ -1,31 +1,31 @@
-﻿# ╔═══════════════════════════════════════════════════════════════════════════════╗
-# ║                                                                               ║
-# ║                          V e l o D e l i v e r y                              ║
-# ║                    Profesyonel Teslimat Etkinlik Sistemi                      ║
-# ║                              Sürüm: 1.0.1                                     ║
-# ║                                                                               ║
-# ╚═══════════════════════════════════════════════════════════════════════════════╝
+# -===============================================================================�
+# �                                                                               �
+# �                          V e l o D e l i v e r y                              �
+# �                    Profesyonel Teslimat Etkinlik Sistemi                      �
+# �                              S�r�m: 1.0.2                                     �
+# �                                                                               �
+# L===============================================================================-
 
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # GENEL AYARLAR
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 
 general:
-  # Dil dosyası (lang klasöründe: tr.yml, en.yml)
+  # Dil dosyas� (lang klas�r�nde: tr.yml, en.yml)
   language: tr
   
   # Saat dilimi
   timezone: Europe/Istanbul
   
-  # Debug modu (konsola detaylı log)
+  # Debug modu (konsola detayl� log)
   debug: false
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# KATEGORİ GÖRÜNEN İSİMLERİ
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
+# KATEGOR� G�R�NEN �S�MLER�
+# ===============================================================================
 
 category-display-names:
-  farm: "Çiftlik"
+  farm: "�iftlik"
   ore: "Maden"
   block: "Blok"
   food: "Yiyecek"
@@ -36,31 +36,31 @@ category-display-names:
   mob: "Mob Drop"
   dye: "Boya"
   tool: "Alet"
-  armor: "Zırh"
-  combat: "Savaş"
-  potion: "İksir"
+  armor: "Z�rh"
+  combat: "Sava�"
+  potion: "�ksir"
   decoration: "Dekorasyon"
-  redstone: "Kızıltaş"
-  misc: "Çeşitli"
+  redstone: "K�z�lta�"
+  misc: "�e�itli"
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TESLİMAT GÖRÜNEN İSİMLERİ
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
+# TESL�MAT G�R�NEN �S�MLER�
+# ===============================================================================
 
 delivery-display-names:
-  gunluk: "Günlük Teslimat"
-  maden: "Maden Teslimatı"
-  blok: "Blok Teslimatı"
-  elmas: "Elmas Teslimatı"
-  ciftlik: "Çiftlik Teslimatı"
-  buyuk-etkinlik: "Büyük Etkinlik"
+  gunluk: "G�nl�k Teslimat"
+  maden: "Maden Teslimat�"
+  blok: "Blok Teslimat�"
+  elmas: "Elmas Teslimat�"
+  ciftlik: "�iftlik Teslimat�"
+  buyuk-etkinlik: "B�y�k Etkinlik"
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# ETKİNLİK AYARLARI
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
+# ETK�NL�K AYARLARI
+# ===============================================================================
 
 events:
-  # Aynı anda maksimum aktif etkinlik
+  # Ayn� anda maksimum aktif etkinlik
   max-concurrent: 5
   
   # Duyurular
@@ -74,62 +74,62 @@ events:
     start: "ENTITY_PLAYER_LEVELUP"
     end: "UI_TOAST_CHALLENGE_COMPLETE"
   
-  # Title gösterimi
+  # Title g�sterimi
   title:
     enabled: true
     fade-in: 10
     stay: 70
     fade-out: 20
 
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # WEBHOOK (Discord)
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # 
-# Discord webhook entegrasyonu ile etkinlik başlangıç ve bitiş bildirimlerini
-# Discord sunucunuza otomatik olarak gönderin.
+# Discord webhook entegrasyonu ile etkinlik ba�lang�� ve biti� bildirimlerini
+# Discord sunucunuza otomatik olarak g�nderin.
 #
-# Webhook URL nasıl alınır:
-# 1. Discord sunucunuzda bir kanal seçin
-# 2. Kanal Ayarları > Entegrasyonlar > Webhooks
-# 3. "Yeni Webhook" oluşturun ve URL'yi kopyalayın
+# Webhook URL nas�l al�n�r:
+# 1. Discord sunucunuzda bir kanal se�in
+# 2. Kanal Ayarlar� > Entegrasyonlar > Webhooks
+# 3. "Yeni Webhook" olu�turun ve URL'yi kopyalay�n
 #
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 
 webhook:
   # Webhook'u aktif/pasif yap
   enabled: true
   
-  # Discord Webhook URL'si (buraya Discord webhook URL'nizi yapıştırın)
+  # Discord Webhook URL'si (buraya Discord webhook URL'nizi yap��t�r�n)
   url: "YOUR_WEBHOOK_URL_HERE"
   
-  # @everyone mention'ı gönder (dikkat: spam olabilir!)
+  # @everyone mention'� g�nder (dikkat: spam olabilir!)
   mention-everyone: false
   
-  # ─────────────────────────────────────────────────────────────────────────────
-  # ETKİNLİK BAŞLANGIÇ EMBED'İ
-  # ─────────────────────────────────────────────────────────────────────────────
+  # �����������������������������������������������������������������������������
+  # ETK�NL�K BA�LANGI� EMBED'�
+  # �����������������������������������������������������������������������������
   # Placeholders:
-  #   {delivery}    - Teslimat adı
-  #   {item}        - İstenen eşya
-  #   {category}    - Kategori adı
-  #   {duration}    - Süre
-  #   {winners}     - Kazanan sayısı
-  #   {end_time}    - Bitiş zamanı
-  # ─────────────────────────────────────────────────────────────────────────────
+  #   {delivery}    - Teslimat ad�
+  #   {item}        - �stenen e�ya
+  #   {category}    - Kategori ad�
+  #   {duration}    - S�re
+  #   {winners}     - Kazanan say�s�
+  #   {end_time}    - Biti� zaman�
+  # �����������������������������������������������������������������������������
   start:
-    # Embed başlığı
-    title: "📦 {delivery} Başladı!"
+    # Embed ba�l���
+    title: "?? {delivery} Ba�lad�!"
     
-    # Embed açıklaması (\\n ile yeni satır)
-    description: "Yeni bir teslimat etkinliği başladı!\\n\\n**🎯 Teslim Edilecek Eşya:**\\n`{item}`\\n\\n**📁 Kategori:** {category}\\n**⏱️ Süre:** {duration}\\n**🏆 Kazanan Sayısı:** {winners} kişi\\n\\n*Hemen sunucuya gir ve teslimata başla!*"
+    # Embed a��klamas� (\\n ile yeni sat�r)
+    description: "Yeni bir teslimat etkinli�i ba�lad�!\\n\\n**?? Teslim Edilecek E�ya:**\\n`{item}`\\n\\n**?? Kategori:** {category}\\n**?? S�re:** {duration}\\n**?? Kazanan Say�s�:** {winners} ki�i\\n\\n*Hemen sunucuya gir ve teslimata ba�la!*"
     
     # Embed rengi (hex: #00FF00 veya decimal: 65280)
     color: "#00FF00"
     
     # Footer metni
-    footer: "VeloDelivery • Teslimat Etkinlik Sistemi"
+    footer: "VeloDelivery � Teslimat Etkinlik Sistemi"
     
-    # Thumbnail resmi (URL veya boş bırak)
+    # Thumbnail resmi (URL veya bo� b�rak)
     thumbnail: ""
     
     # Author bilgisi
@@ -139,61 +139,61 @@ webhook:
     
     # Ek alanlar (fields)
     fields:
-      - name: "Nasıl Katılırım?"
-        value: "Sunucuya gir ve `/teslimat` komutu ile menüyü aç!"
+      - name: "Nas�l Kat�l�r�m?"
+        value: "Sunucuya gir ve `/teslimat` komutu ile men�y� a�!"
         inline: false
   
-  # ─────────────────────────────────────────────────────────────────────────────
-  # ETKİNLİK BİTİŞ EMBED'İ
-  # ─────────────────────────────────────────────────────────────────────────────
+  # �����������������������������������������������������������������������������
+  # ETK�NL�K B�T�� EMBED'�
+  # �����������������������������������������������������������������������������
   # Placeholders:
-  #   {delivery}    - Teslimat adı
-  #   {item}        - Teslim edilen eşya
-  #   {category}    - Kategori adı
-  #   {total}       - Toplam teslimat sayısı
-  #   {participants}- Katılımcı sayısı
-  #   {winners}     - Kazananlar listesi (otomatik oluşturulur)
-  # ─────────────────────────────────────────────────────────────────────────────
+  #   {delivery}    - Teslimat ad�
+  #   {item}        - Teslim edilen e�ya
+  #   {category}    - Kategori ad�
+  #   {total}       - Toplam teslimat say�s�
+  #   {participants}- Kat�l�mc� say�s�
+  #   {winners}     - Kazananlar listesi (otomatik olu�turulur)
+  # �����������������������������������������������������������������������������
   end:
-    # Embed başlığı
-    title: "🏆 {delivery} Sona Erdi!"
+    # Embed ba�l���
+    title: "?? {delivery} Sona Erdi!"
     
-    # Embed açıklaması
-    description: "Teslimat etkinliği tamamlandı!\\n\\n**📦 Teslim Edilen:** `{item}`\\n**📁 Kategori:** {category}\\n**👥 Katılımcı:** {participants} kişi\\n**📊 Toplam Teslimat:** {total} adet"
+    # Embed a��klamas�
+    description: "Teslimat etkinli�i tamamland�!\\n\\n**?? Teslim Edilen:** `{item}`\\n**?? Kategori:** {category}\\n**?? Kat�l�mc�:** {participants} ki�i\\n**?? Toplam Teslimat:** {total} adet"
     
     # Embed rengi
     color: "#FFD700"
     
     # Footer metni
-    footer: "VeloDelivery • Teslimat Sistemi"
+    footer: "VeloDelivery � Teslimat Sistemi"
     
     # Thumbnail resmi
     thumbnail: ""
     
-    # Kazananlar bölümü
+    # Kazananlar b�l�m�
     winners:
-      # Kazananlar başlığı
-      title: "🎖️ Kazananlar"
+      # Kazananlar ba�l���
+      title: "??? Kazananlar"
       
-      # Kazanan formatı ({rank}, {player}, {count} kullanılabilir)
+      # Kazanan format� ({rank}, {player}, {count} kullan�labilir)
       format: "{medal} **{player}** - {count} teslimat"
       
       # Madalya sembolleri
       medals:
-        first: "🥇"
-        second: "🥈"
-        third: "🥉"
-        other: "🏅"
+        first: "??"
+        second: "??"
+        third: "??"
+        other: "??"
       
-      # Kazanan yoksa gösterilecek mesaj
-      no-winners: "*Kimse katılmadı*"
+      # Kazanan yoksa g�sterilecek mesaj
+      no-winners: "*Kimse kat�lmad�*"
       
-      # Maksimum gösterilecek kazanan sayısı
+      # Maksimum g�sterilecek kazanan say�s�
       max-display: 5
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# VERİ KAYDETME
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
+# VER� KAYDETME
+# ===============================================================================
 
 data:
   auto-save-interval: 5
