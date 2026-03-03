@@ -809,32 +809,34 @@ public class VeloDeliveryPlugin extends JavaPlugin implements Listener {
     }
 
     private void handleMainMenuClick(Player player, int slot) {
-        // Sıralama butonu (slot 47)
-        if (slot == 47) {
+        // Sıralama butonu (slot 48 - alt orta sol)
+        if (slot == 48) {
             deliveryGUI.openLeaderboard(player);
             return;
         }
 
-        // Yardım butonu (slot 51)
-        if (slot == 51) {
+        // Yardım butonu (slot 50 - alt orta sağ)
+        if (slot == 50) {
             player.closeInventory();
             player.performCommand("teslimat help");
             return;
         }
 
-        // Aktif teslimatlar 11-15 slotlarında - tıklayınca detay menüsü aç
-        if (slot >= 11 && slot <= 15) {
+        // Aktif teslimatlar - 2. satır (slot 18-26 arası dinamik ortalanmış)
+        if (slot >= 18 && slot <= 26) {
             var events = deliveryService.getAllActiveEvents();
-            int index = slot - 11;
-            if (index < events.size()) {
-                var activeEvent = events.get(index);
-                deliveryGUI.openDeliveryMenu(player, activeEvent);
+            // Hangi event'e tıklandığını bul
+            int[] centeredSlots = deliveryGUI.getCenteredSlotsPublic(events.size(), 2);
+            for (int i = 0; i < centeredSlots.length && i < events.size(); i++) {
+                if (centeredSlots[i] == slot) {
+                    deliveryGUI.openDeliveryMenu(player, events.get(i));
+                    return;
+                }
             }
         }
 
-        // Bekleyen teslimatlar 29-33 slotlarında - tıklanamaz (sadece bilgi)
-        // Tıklandığında mesaj göster
-        if (slot >= 29 && slot <= 33) {
+        // Bekleyen teslimatlar - 4. satır (slot 36-44 arası)
+        if (slot >= 36 && slot <= 44) {
             player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §7Bu teslimat henüz başlamadı!");
         }
     }
