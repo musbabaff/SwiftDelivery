@@ -1,36 +1,30 @@
-# ─────────────────────────────────────────────────────────────────────────────────
-#
-#                              KATEGORİ AYARLARI
-#
-#   Bu dosyada teslimat etkinliklerinde kullanılacak eşya kategorilerini
-#   tanımlıyorsun. Her kategoriye istediğin eşyaları ekleyebilir,
-#   fiyatlarını belirleyebilirsin.
-#
-#   Eşya satış özelliği sayesinde oyuncular teslimat yaparken para kazanır.
-#   Bu özellik teslimatı kazanamasalar bile oyuncuları motive eder!
-#
-# ─────────────────────────────────────────────────────────────────────────────────
-#
-#   YAPI:
-#
-#   categories:
-#     kategori_adi:
-#       items:
-#         ESYA_ADI: fiyat       # Fiyat belirle (Vault ekonomisi)
-#         ESYA_ADI_2: fiyat
-#
-#   (!)NOT: Fiyat 0 ise o eşya için para verilmez.
-#   (!)NOT: Eşya adları Minecraft item ID'leri olmalı (DIAMOND, IRON_INGOT vs.)
-#
-# ─────────────────────────────────────────────────────────────────────────────────
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                                                                             │
+# │                     SwiftDelivery — Category Definitions                    │
+# │                                                                             │
+# │  Define the item categories used in delivery events. Each category          │
+# │  contains a list of items and their sell prices (Vault economy).            │
+# │                                                                             │
+# │  STRUCTURE:                                                                 │
+# │    categories:                                                              │
+# │      category_name:                                                         │
+# │        items:                                                               │
+# │          ITEM_NAME: price    # Sell price (Vault economy)                   │
+# │                                                                             │
+# │  NOTES:                                                                     │
+# │    - Price of 0 means no payment for that item                              │
+# │    - Item names must be valid Minecraft material IDs                        │
+# │    - Example: DIAMOND, IRON_INGOT, WHEAT                                   │
+# │                                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
 
 categories:
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # BLOK KATEGORİSİ
-  # Yapı malzemeleri ve bloklar
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  BLOCKS                                        │
+  # │  Building materials and construction blocks    │
+  # └───────────────────────────────────────────────┘
+
   block:
     items:
       STONE: 2
@@ -55,11 +49,11 @@ categories:
       STONE_BRICKS: 3
       OBSIDIAN: 50
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # MADEN KATEGORİSİ
-  # Değerli madenler - Yüksek fiyatlar
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  ORES & MINERALS                               │
+  # │  Precious ores and refined metals              │
+  # └───────────────────────────────────────────────┘
+
   ore:
     items:
       COAL: 5
@@ -79,11 +73,11 @@ categories:
       NETHERITE_INGOT: 10000
       ANCIENT_DEBRIS: 1500
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # ÇİFTLİK KATEGORİSİ
-  # Tarım ürünleri (defaul ayarlar)
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  FARMING                                       │
+  # │  Crops, seeds, and agricultural products       │
+  # └───────────────────────────────────────────────┘
+
   farm:
     items:
       WHEAT: 3
@@ -104,11 +98,11 @@ categories:
       STRING: 5
       HONEYCOMB: 20
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # YİYECEK KATEGORİSİ
-  # Yenilebilir eşyalar (default ayarlar)
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  FOOD                                          │
+  # │  Edible items and consumables                  │
+  # └───────────────────────────────────────────────┘
+
   food:
     items:
       BREAD: 8
@@ -125,15 +119,14 @@ categories:
       BAKED_POTATO: 6
       PUMPKIN_PIE: 20
       COOKIE: 3
-      MELON_SLICE: 2
       SWEET_BERRIES: 4
       HONEY_BOTTLE: 30
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # SİLAH KATEGORİSİ
-  # Savaş eşyaları (default ayar)
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  WEAPONS                                       │
+  # │  Combat and offensive equipment                │
+  # └───────────────────────────────────────────────┘
+
   weapon:
     items:
       WOODEN_SWORD: 10
@@ -148,11 +141,11 @@ categories:
       SHIELD: 150
       TRIDENT: 5000
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # ZIRH KATEGORİSİ
-  # Koruyucu ekipmanlar (default ayar)
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  ARMOR                                         │
+  # │  Protective equipment and wearables            │
+  # └───────────────────────────────────────────────┘
+
   armor:
     items:
       LEATHER_HELMET: 20
@@ -173,11 +166,11 @@ categories:
       NETHERITE_BOOTS: 12000
       ELYTRA: 50000
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # ALET KATEGORİSİ
-  # Araçlar (default ayar)
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  TOOLS                                         │
+  # │  Utility tools and instruments                 │
+  # └───────────────────────────────────────────────┘
+
   tool:
     items:
       WOODEN_PICKAXE: 8
@@ -194,11 +187,11 @@ categories:
       SHEARS: 40
       FLINT_AND_STEEL: 25
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # NADİR KATEGORİSİ
-  # Nadir ve değerli eşyalar - En yüksek fiyatlar
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  RARE & LEGENDARY                              │
+  # │  Ultra-rare items with premium pricing         │
+  # └───────────────────────────────────────────────┘
+
   rare:
     items:
       DIAMOND: 500
@@ -215,11 +208,11 @@ categories:
       TRIDENT: 5000
       SHULKER_SHELL: 2000
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # NETHER KATEGORİSİ
-  # Nether eşyaları
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  NETHER                                        │
+  # │  Items found exclusively in the Nether         │
+  # └───────────────────────────────────────────────┘
+
   nether:
     items:
       NETHERRACK: 1
@@ -236,11 +229,11 @@ categories:
       BLACKSTONE: 8
       ANCIENT_DEBRIS: 1500
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # END KATEGORİSİ
-  # End eşyaları
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  END                                           │
+  # │  Items from The End dimension                  │
+  # └───────────────────────────────────────────────┘
+
   end:
     items:
       END_STONE: 5
@@ -254,11 +247,11 @@ categories:
       DRAGON_BREATH: 1000
       ELYTRA: 50000
 
-  # ═══════════════════════════════════════════════════════════════════════════════
-  # REDSTONE KATEGORİSİ
-  # Redstone bileşenleri
-  # ═══════════════════════════════════════════════════════════════════════════════
-  
+  # ┌───────────────────────────────────────────────┐
+  # │  REDSTONE                                      │
+  # │  Redstone components and mechanisms            │
+  # └───────────────────────────────────────────────┘
+
   redstone:
     items:
       REDSTONE: 10

@@ -1,83 +1,95 @@
-# ╔═══════════════════════════════════════════════════════════════════════════════╗
-# ║                                                                               ║
-# ║                    VeloDelivery - Teslimat Tanımları                          ║
-# ║                                                                               ║
-# ╚═══════════════════════════════════════════════════════════════════════════════╝
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                                                                             │
+# │                    SwiftDelivery — Delivery Definitions                     │
+# │                                                                             │
+# │  This file defines all delivery events, their schedules, rewards,          │
+# │  and behavior. Each delivery is a timed event where players compete        │
+# │  to deliver specific items for rankings and rewards.                       │
+# │                                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
 #
-# ═══════════════════════════════════════════════════════════════════════════════
-# KATEGORİ VE EŞYA SEÇİMİ
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-#   category:
-#     mode: random              → Rastgele kategori seç
-#     mode: fixed               → Sabit kategori kullan
-#       value: block            → Kategori adı (categories.yml'den)
-#
-#   item:
-#     mode: random              → Kategoriden rastgele eşya seç
-#     mode: fixed               → Sabit eşya kullan
-#       value: DIAMOND          → Eşya adı
-#
-# ═══════════════════════════════════════════════════════════════════════════════
-# ZAMANLAMA
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-#   schedule:
-#     start: "every day 20:00"      → Her gün 20:00'da başla
-#     end: "every day 21:00"        → Her gün 21:00'da bitir
-#
-# ═══════════════════════════════════════════════════════════════════════════════
-# WEBHOOK
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-#   webhook:
-#     enabled: true/false       → Bu teslimat için webhook aktif mi?
-#     url: ""                   → Özel URL (boş bırakırsan config.yml'deki kullanılır)
-#
-#   NOT: Webhook ayarları (embed, renkler, format) config.yml'den alınır.
-#        Burada sadece aktif/pasif ve opsiyonel özel URL belirtilir.
-#
-# ═══════════════════════════════════════════════════════════════════════════════
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  CATEGORY & ITEM SELECTION                                                  │
+# │                                                                             │
+# │  category:                                                                  │
+# │    mode: random         → Pick a random category                            │
+# │    mode: fixed          → Use a specific category                           │
+# │      value: block       → Category name (from categories.yml)               │
+# │                                                                             │
+# │  item:                                                                      │
+# │    mode: random         → Pick a random item from the category              │
+# │    mode: fixed          → Use a specific item                               │
+# │      value: DIAMOND     → Minecraft item ID                                 │
+# │                                                                             │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │  SCHEDULING                                                                 │
+# │                                                                             │
+# │  schedule:                                                                  │
+# │    start: "every day 20:00"       → Start every day at 20:00                │
+# │    end:   "every day 21:00"       → End every day at 21:00                  │
+# │    start: "every friday 19:00"    → Start every Friday at 19:00             │
+# │    start: "every saturday 18:00"  → Start every Saturday at 18:00           │
+# │                                                                             │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │  REWARDS                                                                    │
+# │                                                                             │
+# │  Reward types: "item", "command", "both"                                    │
+# │  Rank ranges: "1", "2", "3", "4-10", "11-25", "default"                    │
+# │  Placeholder: {player} = winner's name, {rank} = winner's rank             │
+# │                                                                             │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │  WEBHOOK (per-delivery override)                                            │
+# │                                                                             │
+# │  webhook:                                                                   │
+# │    enabled: true/false  → Enable webhook for this delivery                  │
+# │    url: ""              → Empty = use global URL from config.yml             │
+# │                         → Set a URL to send to a different channel           │
+# │                                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
 
 deliveries:
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  GÜNLÜK TESLİMAT                                                            │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  gunluk:
+  # ┌───────────────────────────────────────────────┐
+  # │  DAILY DELIVERY                                │
+  # │  Every day at 20:00 — Random item, 1 hour      │
+  # └───────────────────────────────────────────────┘
+
+  daily:
     enabled: true
-    display-name: "Günlük Teslimat"
+    display-name: "Daily Delivery"
     visible-before-start: true
-    
+
     category:
       mode: random
     item:
       mode: random
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every day 20:00"
       end: "every day 21:00"
-    
+
+    # Allow players to sell delivered items for money (requires Vault)
     sellable:
       enabled: true
-      tax-rate: 0.0
-    
+      tax-rate: 0.0            # 0.0 = no tax, 0.1 = 10% tax
+
+    # Commands to run when the event ends (for all participants)
     end-commands:
-      enabled: false 
+      enabled: false
       commands:
         - "cc give {player} vote 1"
 
+    # Rewards by rank position
     rewards:
       1:
-        type: both
+        type: both             # "item" | "command" | "both"
         item: DIAMOND
         amount: 10
         commands:
           - "eco give {player} 5000"
-          - "broadcast &6&l1. &e{player} &7günlük teslimatı kazandı!"
+          - "broadcast &6&l1. &e{player} &7won the daily delivery!"
       2:
         type: both
         item: DIAMOND
@@ -92,45 +104,45 @@ deliveries:
         type: command
         commands:
           - "eco give {player} 500"
-      default:
+      default:                 # All other participants
         type: command
         commands:
           - "eco give {player} 100"
-    
-    # Webhook - config.yml'deki ayarları kullanır
+
     webhook:
       enabled: true
-      url: ""  # Boş = config.yml'deki global URL
+      url: ""                  # Empty = use global webhook from config.yml
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  MADEN TESLİMATI                                                            │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  maden:
+  # ┌───────────────────────────────────────────────┐
+  # │  MINING DELIVERY                               │
+  # │  Every Saturday at 18:00 — Ore category         │
+  # └───────────────────────────────────────────────┘
+
+  mining:
     enabled: true
-    display-name: "Maden Teslimatı"
+    display-name: "Mining Delivery"
     visible-before-start: true
-    
+
     category:
       mode: fixed
       value: ore
     item:
       mode: random
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every saturday 18:00"
       end: "every saturday 20:00"
-    
+
     sellable:
       enabled: true
       tax-rate: 0.0
-    
+
     end-commands:
       enabled: false
       commands: []
-    
+
     rewards:
       1:
         type: command
@@ -148,40 +160,41 @@ deliveries:
         type: command
         commands:
           - "eco give {player} 1000"
-    
+
     webhook:
       enabled: true
       url: ""
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  BLOK TESLİMATI                                                             │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  blok:
+  # ┌───────────────────────────────────────────────┐
+  # │  BLOCK DELIVERY                                │
+  # │  Every Sunday at 14:00 — Block category         │
+  # └───────────────────────────────────────────────┘
+
+  blocks:
     enabled: true
-    display-name: "Blok Teslimatı"
+    display-name: "Block Delivery"
     visible-before-start: true
-    
+
     category:
       mode: fixed
       value: block
     item:
       mode: random
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every sunday 14:00"
       end: "every sunday 16:00"
-    
+
     sellable:
       enabled: true
-      tax-rate: 0.05
-    
+      tax-rate: 0.05           # 5% tax on block deliveries
+
     end-commands:
       enabled: false
       commands: []
-    
+
     rewards:
       1:
         type: item
@@ -195,42 +208,43 @@ deliveries:
         type: item
         item: DIAMOND
         amount: 1
-    
+
     webhook:
       enabled: true
       url: ""
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  ELMAS TESLİMATI                                                            │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  elmas:
+  # ┌───────────────────────────────────────────────┐
+  # │  DIAMOND DELIVERY                              │
+  # │  Every Friday at 19:00 — Fixed diamond item     │
+  # └───────────────────────────────────────────────┘
+
+  diamond:
     enabled: true
-    display-name: "Elmas Teslimatı"
+    display-name: "Diamond Delivery"
     visible-before-start: true
-    
+
     category:
       mode: fixed
       value: ore
     item:
       mode: fixed
       value: DIAMOND
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every friday 19:00"
       end: "every friday 21:00"
-    
+
     sellable:
       enabled: true
-      tax-rate: 0.20
-    
+      tax-rate: 0.20           # 20% luxury tax
+
     end-commands:
       enabled: true
       commands:
-        - "cc give {player} elmas_teslimat 1"
-    
+        - "cc give {player} diamond_delivery 1"
+
     rewards:
       1:
         type: both
@@ -258,40 +272,41 @@ deliveries:
         type: command
         commands:
           - "eco give {player} 100"
-    
+
     webhook:
       enabled: true
       url: ""
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  ÇİFTLİK TESLİMATI                                                          │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  ciftlik:
+  # ┌───────────────────────────────────────────────┐
+  # │  FARMING DELIVERY                              │
+  # │  Every Wednesday at 21:00 — Farm category       │
+  # └───────────────────────────────────────────────┘
+
+  farming:
     enabled: true
-    display-name: "Çiftlik Teslimatı"
+    display-name: "Farming Delivery"
     visible-before-start: true
-    
+
     category:
       mode: fixed
       value: farm
     item:
       mode: random
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every wednesday 21:00"
       end: "every wednesday 22:00"
-    
+
     sellable:
       enabled: true
       tax-rate: 0.05
-    
+
     end-commands:
       enabled: false
       commands: []
-    
+
     rewards:
       1:
         type: item
@@ -305,42 +320,43 @@ deliveries:
         type: item
         item: GOLDEN_CARROT
         amount: 16
-    
+
     webhook:
       enabled: true
       url: ""
 
-  # ┌─────────────────────────────────────────────────────────────────────────────┐
-  # │  BÜYÜK TESLİMAT ETKİNLİĞİ                                                   │
-  # │  Özel webhook URL örneği - farklı Discord kanalına gönderir                 │
-  # └─────────────────────────────────────────────────────────────────────────────┘
-  
-  buyuk-etkinlik:
+  # ┌───────────────────────────────────────────────┐
+  # │  GRAND EVENT                                   │
+  # │  Every Saturday at 20:00 — 3-hour marathon      │
+  # │  Massive rewards, custom webhook channel        │
+  # └───────────────────────────────────────────────┘
+
+  grand-event:
     enabled: true
-    display-name: "Büyük Teslimat Etkinliği"
+    display-name: "Grand Event"
     visible-before-start: true
-    
+
     category:
       mode: random
     item:
       mode: random
-    
+
     timezone: Europe/Istanbul
-    
+
     schedule:
       start: "every saturday 20:00"
       end: "every saturday 23:00"
-    
+
     sellable:
       enabled: true
-      tax-rate: 0.15
-    
+      tax-rate: 0.15           # 15% luxury tax
+
     end-commands:
       enabled: true
       commands:
-        - "cc give {player} buyuk_etkinlik 1"
-        - "cc give {player} siralama_{rank} 1"
-    
+        - "cc give {player} grand_event 1"
+        - "cc give {player} rank_{rank} 1"
+
     rewards:
       1:
         type: both
@@ -348,7 +364,7 @@ deliveries:
         amount: 5
         commands:
           - "eco give {player} 50000"
-          - "broadcast &6&l🏆 &e{player} &7büyük etkinliği kazandı!"
+          - "broadcast &6&l🏆 &e{player} &7won the Grand Event!"
       2:
         type: both
         item: NETHERITE_INGOT
@@ -381,8 +397,8 @@ deliveries:
         type: command
         commands:
           - "eco give {player} 100"
-    
-    # Özel webhook URL - farklı Discord kanalına gönderir
+
+    # Custom webhook URL — sends to a different Discord channel
     webhook:
       enabled: true
-      url: ""  # Buraya özel URL yazabilirsin, boşsa config.yml'deki kullanılır
+      url: ""                  # Set a different URL here, or leave empty for global

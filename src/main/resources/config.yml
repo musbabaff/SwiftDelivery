@@ -1,28 +1,38 @@
-# ===================================================================
-#
-#                       S w i f t D e l i v e r y
-#               Premium Delivery Event System by NettyForge
-#                            Version: 1.0.0
-#
-# ===================================================================
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                                                                             │
+# │                     SwiftDelivery — Configuration                           │
+# │               Premium Delivery Event System by NettyForge                   │
+# │                            Version: 1.0.0                                   │
+# │                                                                             │
+# │  Documentation: https://github.com/musbabaff/SwiftDelivery/wiki            │
+# │                                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
 
-# ===================================================================
-# GENERAL SETTINGS
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  GENERAL SETTINGS                              │
+# └───────────────────────────────────────────────┘
 
 general:
-  # Locale file (locales folder: tr.yml, en.yml, de.yml, etc.)
+
+  # Language file to use (from locales/ folder)
+  # Available: en, tr, de, es, fr, pt, ru, zh
   language: en
 
-  # Timezone for scheduling
+  # Timezone for event scheduling
+  # See: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   timezone: Europe/Istanbul
 
-  # Debug mode (detailed console logging)
+  # Enable debug mode for verbose console logging
+  # Only enable this when troubleshooting issues
   debug: false
 
-# ===================================================================
-# CATEGORY DISPLAY NAMES
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  CATEGORY DISPLAY NAMES                        │
+# │                                                │
+# │  Custom names shown in the GUI for each        │
+# │  item category. Must match keys in             │
+# │  categories.yml.                               │
+# └───────────────────────────────────────────────┘
 
 category-display-names:
   farm: "Farm"
@@ -37,15 +47,19 @@ category-display-names:
   dye: "Dye"
   tool: "Tool"
   armor: "Armor"
-  combat: "Combat"
+  weapon: "Weapon"
   potion: "Potion"
   decoration: "Decoration"
   redstone: "Redstone"
   misc: "Miscellaneous"
 
-# ===================================================================
-# DELIVERY DISPLAY NAMES
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  DELIVERY DISPLAY NAMES                        │
+# │                                                │
+# │  Custom names for delivery events shown in     │
+# │  menus, broadcasts, and webhooks.              │
+# │  Must match keys in deliveries.yml.            │
+# └───────────────────────────────────────────────┘
 
 delivery-display-names:
   daily: "Daily Delivery"
@@ -55,73 +69,95 @@ delivery-display-names:
   farming: "Farming Delivery"
   grand-event: "Grand Event"
 
-# ===================================================================
-# EVENT SETTINGS
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  EVENT SETTINGS                                │
+# │                                                │
+# │  Global settings that apply to all delivery    │
+# │  events unless overridden per-delivery.        │
+# └───────────────────────────────────────────────┘
 
 events:
-  # Maximum concurrent active events
+
+  # Maximum number of simultaneously active events
   max-concurrent: 5
 
-  # Announcements
+  # Server-wide announcements
   announcements:
-    start: true
-    end: true
+    start: true            # Broadcast when an event starts
+    end: true              # Broadcast when an event ends
 
-  # Sounds
+  # Sound effects played to all online players
   sounds:
     enabled: true
     start: "ENTITY_PLAYER_LEVELUP"
     end: "UI_TOAST_CHALLENGE_COMPLETE"
 
-  # Title display
+  # Title screen overlay shown to all online players
   title:
     enabled: true
-    fade-in: 10
+    fade-in: 10            # Ticks (20 ticks = 1 second)
     stay: 70
     fade-out: 20
 
-# ===================================================================
-# WEBHOOK (Discord)
-# ===================================================================
-#
-# Discord webhook integration for automated event notifications.
-#
-# How to get a Webhook URL:
-# 1. Choose a channel in your Discord server
-# 2. Channel Settings > Integrations > Webhooks
-# 3. Create a "New Webhook" and copy the URL
-#
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  DISCORD WEBHOOK                               │
+# │                                                │
+# │  Sends rich embed notifications to Discord     │
+# │  when delivery events start and end.           │
+# │                                                │
+# │  How to get a Webhook URL:                     │
+# │  1. Choose a channel in your Discord server    │
+# │  2. Channel Settings > Integrations > Webhooks │
+# │  3. Create "New Webhook" and copy the URL      │
+# └───────────────────────────────────────────────┘
 
 webhook:
-  # Enable/disable webhook
+
+  # Master switch — enable/disable all webhook notifications
   enabled: false
 
-  # Discord Webhook URL (paste your Discord webhook URL here)
+  # Discord Webhook URL
+  # Paste your full Discord webhook URL here
   url: "YOUR_WEBHOOK_URL_HERE"
 
-  # Send @everyone mention (warning: may be spammy!)
+  # Include @everyone mention in webhook messages
+  # Warning: This can be spammy! Use with caution.
   mention-everyone: false
 
-  # --- Event Start Embed ---
-  # Placeholders: {delivery}, {item}, {category}, {duration}, {winners}, {end_time}
+  # ── Event Start Embed ──────────────────────────
+  #
+  # Placeholders:
+  #   {delivery}  — Delivery event name
+  #   {item}      — Required item name
+  #   {category}  — Category name
+  #   {duration}  — Event duration
+  #   {winners}   — Number of winner slots
+  #   {end_time}  — When the event ends
+  #
   start:
     title: "📦 {delivery} Started!"
-    description: "A new delivery event has started!\\n\\n**📋 Item to Deliver:**\\n`{item}`\\n\\n**📂 Category:** {category}\\n**⏰ Duration:** {duration}\\n**🏆 Winners:** {winners} players\\n\\n*Join the server and start delivering!*"
+    description: "A new delivery event has begun!\\n\\n**📋 Item to Deliver:**\\n`{item}`\\n\\n**📂 Category:** {category}\\n**⏰ Duration:** {duration}\\n**🏆 Winners:** {winners} players\\n\\n*Join the server and start delivering!*"
     color: "#00FF00"
     footer: "SwiftDelivery | Delivery Event System"
     thumbnail: ""
     author:
-      name: "Delivery"
+      name: "SwiftDelivery"
       icon: ""
     fields:
       - name: "How to Participate?"
         value: "Join the server and use `/delivery` to open the menu!"
         inline: false
 
-  # --- Event End Embed ---
-  # Placeholders: {delivery}, {item}, {category}, {total}, {participants}, {winners}
+  # ── Event End Embed ────────────────────────────
+  #
+  # Placeholders:
+  #   {delivery}      — Delivery event name
+  #   {item}          — Delivered item name
+  #   {category}      — Category name
+  #   {total}         — Total items delivered
+  #   {participants}  — Number of participants
+  #   {winners}       — Formatted winners list
+  #
   end:
     title: "🏆 {delivery} Ended!"
     description: "The delivery event is complete!\\n\\n**📦 Delivered:** `{item}`\\n**📂 Category:** {category}\\n**👥 Participants:** {participants} players\\n**📊 Total Deliveries:** {total} items"
@@ -139,10 +175,17 @@ webhook:
       no-winners: "*No participants*"
       max-display: 5
 
-# ===================================================================
-# DATA STORAGE
-# ===================================================================
+# ┌───────────────────────────────────────────────┐
+# │  DATA STORAGE                                  │
+# │                                                │
+# │  Controls how event data is persisted          │
+# │  for crash recovery and leaderboards.          │
+# └───────────────────────────────────────────────┘
 
 data:
+
+  # How often to auto-save event data (in minutes)
   auto-save-interval: 5
+
+  # Data file name (stored in plugin folder)
   file: "data.yml"
