@@ -1,0 +1,23 @@
+All Rights Reserved
+
+Copyright (c) 2024-2026 NettyForge (musbabaff)
+
+This software and its source code are the intellectual property of NettyForge.
+
+Permission is NOT granted to:
+- Copy, modify, merge, publish, distribute, sublicense, or sell copies of this software
+- Use this software for commercial purposes without explicit written permission
+- Reverse engineer, decompile, or disassemble this software
+
+Permission IS granted to:
+- Use the compiled plugin JAR on your own Minecraft server(s)
+- Fork this repository for personal, non-commercial modifications
+- Submit pull requests and contributions (which become property of NettyForge)
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -1,0 +1,283 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════╗
+# ║                                                                               ║
+# ║                      SwiftDelivery - Archivo de Idioma Español                 ║
+# ║                                                                               ║
+# ║  Sistema Profesional de Eventos de Entrega para Servidores Minecraft          ║
+# ║  Todos los mensajes soportan códigos de color y marcadores                    ║
+# ║                                                                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════════╝
+
+general:
+  prefix: "&e&lV&6elo&e&lD&6elivery &8»"
+  no_permission: "&cNo tienes permiso para usar este comando."
+  player_only: "&cEste comando solo puede ser usado por jugadores."
+  unknown_command: "&cComando desconocido: &f{command}"
+  unknown_command_tip: "&7Usa &e/dc help &7para ver los comandos disponibles."
+  console_name: "Consola"
+  enabled: "&a¡SwiftDelivery ha sido activado!"
+  disabled: "&c¡SwiftDelivery ha sido desactivado!"
+
+command:
+  reload:
+    start: "&7⟳ Recargando configuración..."
+    success: "&a✓ ¡Configuración recargada exitosamente!"
+    success_with_warnings: "&e⚠ Cargado con {count} advertencia(s). Revisa la consola."
+    failed: "&c✗ ¡Error al recargar! La configuración anterior permanece activa."
+  help:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  SwiftDelivery &8│ &fMenú de Ayuda"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    basic_header: "&e&lComandos Básicos"
+    cmd_help: "  &e/dc help &8- &7Muestra este menú"
+    cmd_version: "  &e/dc version &8- &7Muestra la versión del plugin"
+    admin_header: "&c&lComandos de Admin"
+    cmd_reload: "  &e/dc reload &8- &7Recarga la configuración"
+    cmd_info: "  &e/dc info &8- &7Información del sistema"
+    cmd_categories: "  &e/dc categories &8- &7Lista de categorías"
+    event_header: "&a&lGestión de Eventos"
+    cmd_list: "  &e/dc list &8- &7Lista todas las entregas"
+    cmd_status: "  &e/dc status [nombre] &8- &7Estado del evento"
+    cmd_start: "  &e/dc start <nombre> [duración] [ganadores] &8- &7Iniciar evento"
+    cmd_stop: "  &e/dc stop <nombre> &8- &7Detener evento"
+    cmd_top: "  &e/dc top [nombre] &8- &7Tabla de clasificación"
+    player_header: "&b&lComandos de Jugador"
+    cmd_delivery: "  &e/delivery &8- &7Abrir menú de entregas"
+    cmd_deliver: "  &e/deliver &8- &7Entregar items del inventario"
+    tip: "&7Admin: &f/dc&7, Jugador: &f/delivery&7, &f/deliver"
+  version:
+    header: "&6&l  ╔══════════════════════════════╗"
+    title: "&6&l  ║     &e&lV&6elo&e&lD&6elivery &f&lv1.0.4   &6&l║"
+    footer: "&6&l  ╚══════════════════════════════╝"
+    description: "&7  Sistema de eventos de entrega programados"
+    description2: "&7  para servidores Minecraft."
+    authors: "&7  Desarrollador: &fmusbabaff"
+    api: "&7  API: &fSpigot/Paper 1.16.5+"
+  info:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  SwiftDelivery &8│ &fInfo del Sistema"
+    categories: "  &7Categorías    &8│ &f{count}"
+    deliveries: "  &7Entregas      &8│ &f{total} &7(&a{enabled} activas&7)"
+    active: "  &7Activos       &8│ &a{count} &7eventos"
+    languages: "  &7Idiomas       &8│ &ftr, en, de, es, fr, ru, zh, pt"
+  list:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  SwiftDelivery &8│ &fLista de Entregas"
+    empty: "&7  No hay entregas definidas."
+    empty_tip: "&7  &oEdita deliveries.yml para agregar entregas."
+    item_running: "  &a▶ &f{name} &a[ACTIVO]"
+    item_ready: "  &e● &f{name} &e[LISTO]"
+    item_disabled: "  &c○ &f{name} &c[DESACTIVADO]"
+    category: "     &7Categoría: &f{category} &8({mode})"
+    winners: "     &7Ganadores: &f{count} jugadores"
+    total: "&7  Total: &f{count} &7entregas"
+  status:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  SwiftDelivery &8│ &f{name}"
+    running: "  &7Estado       &8│ &a● Activo"
+    not_running: "  &7Estado       &8│ &c○ Inactivo"
+    category: "  &7Categoría    &8│ &f{category}"
+    item: "  &7Item         &8│ &e{item}"
+    participants: "  &7Participantes&8│ &f{count} jugadores"
+    deliveries: "  &7Entregas     &8│ &f{count} items"
+    start_time: "  &7Iniciado     &8│ &f{time}"
+    end_time: "  &7Termina      &8│ &f{time}"
+    not_found: "&c✗ Entrega no encontrada: &f{name}"
+    not_active: "&7ℹ Esta entrega no está activa: &f{name}"
+    not_active_tip: "&7  Inicia con: &e/dc start {name}"
+    no_active: "&7ℹ No hay eventos activos en este momento."
+    no_active_tip: "&7  &oInicia uno con: &e/dc start <nombre>"
+  start:
+    usage: "&c✗ Uso: &e/dc start <entrega> [duración] [ganadores]"
+    usage_duration: "&7  Formato de duración: &f1h&7, &f30m&7, &f2h30m"
+    usage_winners: "&7  Ganadores: &f1-10 &7(número)"
+    usage_example: "&7  Ejemplo: &e/dc start daily 2h 3"
+    usage_list: "&7  Entregas disponibles: &e/dc list"
+    not_found: "&c✗ Entrega no encontrada: &f{name}"
+    already_running: "&c✗ Este evento ya está activo: &f{name}"
+    already_running_tip: "&7  Ver estado: &e/dc status {name}"
+    invalid_duration: "&c✗ Formato de duración inválido: &f{duration}"
+    invalid_duration_tip: "&7  Ejemplo: &f1h&7, &f30m&7, &f2h30m"
+    invalid_winners: "&c✗ Los ganadores deben estar entre 1-10: &f{count}"
+    failed: "&c✗ ¡Error al iniciar el evento!"
+    failed_tip: "&7  No se pudo resolver la categoría o el item."
+    success: "&a✓ ¡Evento iniciado!"
+    success_delivery: "  &7Entrega     &8│ &f{name}"
+    success_category: "  &7Categoría   &8│ &f{category}"
+    success_item: "  &7Item        &8│ &e{item}"
+    success_duration: "  &7Duración    &8│ &f{duration}"
+    success_winners: "  &7Ganadores   &8│ &f{count} jugadores"
+  stop:
+    usage: "&c✗ Uso: &e/dc stop <entrega>"
+    usage_tip: "&7  Eventos activos: &e/dc status"
+    not_found: "&c✗ Este evento no está activo: &f{name}"
+    success: "&c■ Evento detenido: &f{name}"
+    winners_header: "&7Ganadores:"
+    winner_format: "  {medal} &f{player} &7- &e{count} entregas"
+    no_winners: "&7  Sin ganadores - nadie entregó."
+  top:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  Clasificación &8│ &f{item}"
+    empty: "&7  Aún no hay entregas."
+    entry: "  {medal} &f{player} &8- &e{count} &7entregas"
+    total: "&7  Total: &f{count} &7entregas"
+    no_active: "&7ℹ No hay eventos activos."
+  categories:
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    title: "&6&l  SwiftDelivery &8│ &fLista de Categorías"
+    empty: "&7  No hay categorías definidas."
+    empty_tip: "&7  &oRevisa el archivo categories.yml."
+    item: "  &e▸ &f{name} &8(&7{count} items&8)"
+    total: "&7  Total: &f{count} &7categorías"
+
+event:
+  start:
+    broadcast: "&a{delivery} &7¡ha comenzado! &eRequerido: &f{item}"
+    title: "&a&l{delivery}"
+    subtitle: "&7Requerido: &e{item}"
+  end:
+    broadcast: "&c{delivery} &7¡ha terminado!"
+    winners_header: "&6Ganadores:"
+    winner_format: "  {color}{rank}. &f{player} &8- &e{count} &7entregas"
+    no_winners: "&7  Sin ganadores - nadie entregó."
+    title: "&c&l¡EVENTO TERMINADO!"
+    subtitle: "&7{delivery}"
+  active:
+    info: "&7Activo: &f{delivery}"
+    item: "&7Item: &e{item}"
+    category: "&7Categoría: &f{category}"
+    remaining: "&7Restante: &f{time}"
+    participants: "&7Participantes: &f{count}"
+  none:
+    message: "&7No hay eventos de entrega activos en este momento."
+    tip: "&7Vuelve más tarde o espera eventos programados."
+
+delivery:
+  success:
+    title: "&a&l¡ENTREGADO!"
+    subtitle: "&e{amount} &7x &f{item}"
+    message: "&a{amount} &7x &e{item} &7¡entregado!"
+    stats: "&7Total: &f{total} &8| &7Rango: &e#{rank}"
+  chest:
+    prompt: "&a¡Haz clic derecho en un cofre! &7(10 segundos)"
+    success: "&a{amount} &7x &e{item} &7¡entregado desde el cofre!"
+    not_chest: "&c¡Esto no es un cofre!"
+    empty: "&c¡No hay &e{item} &cen este cofre!"
+    timeout: "&cSelección de cofre expirada."
+  inventory:
+    empty: "&c¡No hay &e{item} &cen tu inventario!"
+  error:
+    no_active: "&c¡No hay evento de entrega activo!"
+    invalid_item: "&cItem inválido: &f{item}"
+    not_started: "&c¡Esta entrega aún no ha comenzado!"
+
+reward:
+  received:
+    item: "&a&l✦ RECOMPENSA &r&7Recibido: &f{amount}x {item}&7!"
+    command: "&a&l✦ RECOMPENSA &r&7¡Comando de recompensa ejecutado!"
+    both: "&a&l✦ RECOMPENSA &r&7Recibido: &f{amount}x {item} &7+ ¡bonus!"
+  pending:
+    has_pending: "&eTienes recompensas pendientes. Serán entregadas pronto."
+    delivered: "&a¡Tus recompensas pendientes han sido entregadas!"
+    none: "&7No tienes recompensas pendientes."
+  inventory_full: "&e¡Inventario lleno! La recompensa se guardó para después."
+
+gui:
+  main:
+    title: "Menú de Entregas"
+    active_delivery: "&a{name}"
+    waiting_delivery: "&7{name}"
+    leaderboard: "&bClasificación"
+    leaderboard_lore: "&7Ver los mejores entregadores"
+    help: "&fAyuda"
+    help_lore: "&7Aprende sobre el sistema"
+  detail:
+    title: "Entrega: {name}"
+    info: "&e{name}"
+    required_item: "&7Item Requerido"
+    category: "&7Categoría: &f{category}"
+    total_deliveries: "&7Entregas Totales: &e{count}"
+    your_deliveries: "&7Tus Entregas: &a{count}"
+    your_rank: "&7Tu Rango: &e#{rank}"
+    deliver_inventory: "&aEntregar del Inventario"
+    deliver_inventory_lore: "&7Entrega todos los {item} de tu inventario"
+    deliver_chest: "&6Entregar del Cofre"
+    deliver_chest_lore: "&7Haz clic derecho en un cofre"
+    deliver_chest_time: "&e10 segundos para seleccionar"
+    back: "&cVolver"
+    back_lore: "&7Volver al menú principal"
+  leaderboard:
+    title: "Clasificación"
+    no_active: "&7Sin Evento Activo"
+    no_active_lore: "&8Esperando evento de entrega"
+    entry: "{color}#{rank} {player}"
+    entry_lore: "&7Entregas: &e{count}"
+    back: "&cVolver"
+    back_lore: "&7Volver al menú principal"
+  waiting:
+    status: "&8Esperando"
+    start_time: "&7Inicia: &e{time}"
+    not_started: "&8Aún no iniciado"
+
+error:
+  config_load: "&cError de configuración: &f{error}"
+  event_start: "&cError al iniciar evento: &f{error}"
+  event_end: "&cError al terminar evento: &f{error}"
+  reward_give: "&cError al dar recompensa: &f{error}"
+  webhook_send: "&cError de webhook: &f{error}"
+  invalid_player: "&cJugador inválido: &f{player}"
+  database: "&cOcurrió un error de base de datos."
+  internal: "&cOcurrió un error interno."
+
+validation:
+  missing_field: "Campo requerido faltante: {field}"
+  invalid_value: "Valor inválido para {field}: {value}"
+  invalid_category: "Categoría no encontrada: {category}"
+  invalid_item: "Item inválido: {item}"
+  invalid_timezone: "Zona horaria inválida: {timezone}"
+  invalid_schedule: "Horario inválido: {expression}"
+  empty_category: "Categoría sin items: {category}"
+  duplicate_delivery: "Nombre de entrega duplicado: {name}"
+
+webhook:
+  start:
+    title: "📦 ¡{delivery} Ha Comenzado!"
+    description: "¡Un nuevo evento de entrega ha comenzado!\\n\\n**🎯 Item Requerido:**\\n`{item}`\\n\\n**📁 Categoría:** {category}\\n**⏱️ Duración:** {duration}\\n**🏆 Ganadores:** {winners} jugadores\\n\\n*¡Únete al servidor y comienza a entregar!*"
+    color: 65280
+    footer: "SwiftDelivery • Sistema de Eventos de Entrega"
+  end:
+    title: "🏆 ¡{delivery} Ha Terminado!"
+    description: "¡El evento de entrega ha terminado!\\n\\n**📦 Item Entregado:** `{item}`\\n**📁 Categoría:** {category}\\n**👥 Participantes:** {participants} jugadores\\n**📊 Total Entregas:** {total} items"
+    color: 16766720
+    footer: "SwiftDelivery • Sistema de Eventos de Entrega"
+    winners_title: "🎖️ Ganadores"
+    winner_format: "{medal} **{player}** - {count} entregas"
+    no_winners: "*Sin participantes*"
+  medals:
+    first: "🥇"
+    second: "🥈"
+    third: "🥉"
+    other: "🏅"
+
+time:
+  day: "{count} día"
+  days: "{count} días"
+  hour: "{count} hora"
+  hours: "{count} horas"
+  minute: "{count} minuto"
+  minutes: "{count} minutos"
+  second: "{count} segundo"
+  seconds: "{count} segundos"
+  now: "Ahora"
+  and: "y"
+
+medals:
+  first: "&6&l①"
+  second: "&f&l②"
+  third: "&c&l③"
+  other: "&7{rank}."
+
+rank_colors:
+  first: "&6"
+  second: "&f"
+  third: "&c"
+  other: "&7"

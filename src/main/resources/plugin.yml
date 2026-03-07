@@ -1,152 +1,123 @@
-﻿# ╔═══════════════════════════════════════════════════════════════════════════════╗
-# ║                                                                               ║
-# ║                              VeloDelivery                                     ║
-# ║                    Türkiye'nin En Kapsamlı Teslimat Sistemi                   ║
-# ║                                                                               ║
-# ╚═══════════════════════════════════════════════════════════════════════════════╝
+# ===================================================================
+#                         SwiftDelivery
+#            Premium Delivery Event System by NettyForge
+# ===================================================================
 
-name: VeloDelivery
+name: SwiftDelivery
 version: ${project.version}
-main: com.blockstock.VeloDeliveryPlugin
+main: com.nettyforge.swiftdelivery.SwiftDeliveryPlugin
 api-version: '1.16'
 authors:
+  - NettyForge
   - musbabaff
 description: |
- Sunucu sahipleri için kapsamlı teslimat sistemi.
- 1.16.5+ tüm versiyonlarla uyumlu.
-website: https://modrinth.com/plugin/VeloDelivery
+  Premium delivery event automation plugin for Minecraft servers.
+  Compatible with 1.16.5+ all versions.
+website: https://github.com/musbabaff/SwiftDelivery
 softdepend:
   - PlaceholderAPI
   - Vault
   - HolographicDisplays
   - DecentHolograms
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# KOMUTLAR
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===================================================================
+# COMMANDS
+# ===================================================================
 
 commands:
-  velodelivery:
-    description: VeloDelivery admin komutları
+  swiftdelivery:
+    description: SwiftDelivery admin commands
     usage: /<command> <help|reload|list|start|stop|status>
-    aliases: [dc]
-    permission: velodelivery.admin
-  
-  # Oyuncu teslimat menüsü (Türkçe)
-  teslimat:
-    description: Teslimat menüsünü açar
-    usage: /<command> [bilgi|top]
-    aliases: [tm]
-    permission: velodelivery.use
-  
-  # Oyuncu teslimat menüsü (İngilizce)
-  delivery:
-    description: Opens delivery menu
-    usage: /<command> [info|top]
-    aliases: [deliver, deliverymenu, dm]
-    permission: velodelivery.use
-  
-  # Hızlı teslimat komutu (Türkçe)
-  teslim:
-    description: Eşyaları hızlıca teslim eder
-    usage: /<command> [kategori|sandik]
-    aliases: []
-    permission: velodelivery.deliver
-  
-  # Hızlı teslimat komutu (İngilizce)
-  deliver:
-    description: Quickly delivers items
-    usage: /<command> [category|chest]
-    aliases: [del]
-    permission: velodelivery.deliver
+    aliases: [sd, dc]
+    permission: swiftdelivery.admin
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# YETKİLER
-# ═══════════════════════════════════════════════════════════════════════════════
+  delivery:
+    description: Opens the delivery menu
+    usage: /<command> [info|top]
+    aliases: [deliver, deliverymenu, dm, teslimat, tm]
+    permission: swiftdelivery.use
+
+  deliver:
+    description: Quickly delivers items from inventory or chest
+    usage: /<command> [category|chest]
+    aliases: [del, teslim]
+    permission: swiftdelivery.deliver
+
+# ===================================================================
+# PERMISSIONS
+# ===================================================================
 
 permissions:
-  # ─────────────────────────────────────────────────────────────────────────────
-  # ANA YETKİLER
-  # ─────────────────────────────────────────────────────────────────────────────
-  
-  velodelivery.*:
-    description: Tüm VeloDelivery yetkileri
+  # --- Root Permission ---
+  swiftdelivery.*:
+    description: All SwiftDelivery permissions
     default: op
     children:
-      velodelivery.admin: true
-      velodelivery.use: true
-      velodelivery.deliver: true
-      velodelivery.bypass: true
-  
-  # ─────────────────────────────────────────────────────────────────────────────
-  # ADMİN YETKİLERİ
-  # ─────────────────────────────────────────────────────────────────────────────
-  
-  velodelivery.admin:
-    description: Tüm admin yetkileri
+      swiftdelivery.admin: true
+      swiftdelivery.use: true
+      swiftdelivery.deliver: true
+      swiftdelivery.bypass: true
+
+  # --- Admin Permissions ---
+  swiftdelivery.admin:
+    description: All admin permissions
     default: op
     children:
-      velodelivery.admin.reload: true
-      velodelivery.admin.start: true
-      velodelivery.admin.stop: true
-      velodelivery.admin.list: true
-      velodelivery.admin.status: true
-  
-  velodelivery.admin.reload:
-    description: Konfigürasyonu yeniden yükleme
+      swiftdelivery.admin.reload: true
+      swiftdelivery.admin.start: true
+      swiftdelivery.admin.stop: true
+      swiftdelivery.admin.list: true
+      swiftdelivery.admin.status: true
+
+  swiftdelivery.admin.reload:
+    description: Reload configuration files
     default: op
-  
-  velodelivery.admin.start:
-    description: Teslimat başlatma
+
+  swiftdelivery.admin.start:
+    description: Start a delivery event
     default: op
-  
-  velodelivery.admin.stop:
-    description: Teslimat durdurma
+
+  swiftdelivery.admin.stop:
+    description: Stop a delivery event
     default: op
-  
-  velodelivery.admin.list:
-    description: Teslimat listesi görüntüleme
+
+  swiftdelivery.admin.list:
+    description: View delivery list
     default: op
-  
-  velodelivery.admin.status:
-    description: Durum görüntüleme
+
+  swiftdelivery.admin.status:
+    description: View plugin status
     default: op
-  
-  # ─────────────────────────────────────────────────────────────────────────────
-  # OYUNCU YETKİLERİ
-  # ─────────────────────────────────────────────────────────────────────────────
-  
-  velodelivery.use:
-    description: Teslimat menüsünü kullanma
+
+  # --- Player Permissions ---
+  swiftdelivery.use:
+    description: Open the delivery menu
     default: true
-  
-  velodelivery.deliver:
-    description: Eşya teslim etme
+
+  swiftdelivery.deliver:
+    description: Deliver items
     default: true
-  
-  velodelivery.deliver.auto:
-    description: Otomatik teslimat kullanma (/teslim kategori)
+
+  swiftdelivery.deliver.auto:
+    description: Use automatic delivery
     default: true
-  
-  velodelivery.deliver.chest:
-    description: Sandık teslimatı kullanma
+
+  swiftdelivery.deliver.chest:
+    description: Use chest delivery
     default: true
-  
-  # ─────────────────────────────────────────────────────────────────────────────
-  # BYPASS YETKİLERİ
-  # ─────────────────────────────────────────────────────────────────────────────
-  
-  velodelivery.bypass:
-    description: Tüm bypass yetkileri
+
+  # --- Bypass Permissions ---
+  swiftdelivery.bypass:
+    description: All bypass permissions
     default: op
     children:
-      velodelivery.bypass.cooldown: true
-      velodelivery.bypass.limit: true
-  
-  velodelivery.bypass.cooldown:
-    description: Bekleme süresini atla
+      swiftdelivery.bypass.cooldown: true
+      swiftdelivery.bypass.limit: true
+
+  swiftdelivery.bypass.cooldown:
+    description: Bypass cooldown timer
     default: op
-  
-  velodelivery.bypass.limit:
-    description: Teslimat limitini atla
+
+  swiftdelivery.bypass.limit:
+    description: Bypass delivery limit
     default: op

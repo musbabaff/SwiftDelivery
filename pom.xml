@@ -4,19 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.blockstock</groupId>
-    <artifactId>VeloDelivery</artifactId>
-    <version>1.0.4</version>
+    <groupId>com.nettyforge</groupId>
+    <artifactId>SwiftDelivery</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>VeloDelivery</name>
-    <description>Universal delivery automation plugin for Minecraft servers</description>
+    <name>SwiftDelivery</name>
+    <description>Premium delivery event automation plugin for Minecraft servers</description>
+    <url>https://github.com/musbabaff/SwiftDelivery</url>
 
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <repositories>
@@ -107,7 +109,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.yaml.snakeyaml</pattern>
-                                    <shadedPattern>com.blockstock.libs.snakeyaml</shadedPattern>
+                                    <shadedPattern>com.nettyforge.libs.snakeyaml</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

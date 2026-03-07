@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.blockstock</groupId>
-  <artifactId>VeloDelivery</artifactId>
-  <name>VeloDelivery</name>
-  <version>1.0.4</version>
-  <description>Universal delivery automation plugin for Minecraft servers</description>
+  <groupId>com.nettyforge</groupId>
+  <artifactId>SwiftDelivery</artifactId>
+  <name>SwiftDelivery</name>
+  <version>1.0.0</version>
+  <description>Premium delivery event automation plugin for Minecraft servers</description>
+  <url>https://github.com/musbabaff/SwiftDelivery</url>
   <build>
     <resources>
       <resource>
@@ -45,7 +46,7 @@
               <relocations>
                 <relocation>
                   <pattern>org.yaml.snakeyaml</pattern>
-                  <shadedPattern>com.blockstock.libs.snakeyaml</shadedPattern>
+                  <shadedPattern>com.nettyforge.libs.snakeyaml</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -137,5 +138,6 @@
     <java.version>17</java.version>
     <maven.compiler.source>17</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>

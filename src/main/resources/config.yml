@@ -1,199 +1,147 @@
-# -===============================================================================�
-# �                                                                               �
-# �                          V e l o D e l i v e r y                              �
-# �                    Profesyonel Teslimat Etkinlik Sistemi                      �
-# �                              S�r�m: 1.0.4                                     �
-# �                                                                               �
-# L===============================================================================-
+# ===================================================================
+#
+#                       S w i f t D e l i v e r y
+#               Premium Delivery Event System by NettyForge
+#                            Version: 1.0.0
+#
+# ===================================================================
 
-# ===============================================================================
-# GENEL AYARLAR
-# ===============================================================================
+# ===================================================================
+# GENERAL SETTINGS
+# ===================================================================
 
 general:
-  # Dil dosyas� (lang klas�r�nde: tr.yml, en.yml)
-  language: tr
-  
-  # Saat dilimi
+  # Locale file (locales folder: tr.yml, en.yml, de.yml, etc.)
+  language: en
+
+  # Timezone for scheduling
   timezone: Europe/Istanbul
-  
-  # Debug modu (konsola detayl� log)
+
+  # Debug mode (detailed console logging)
   debug: false
 
-# ===============================================================================
-# KATEGOR� G�R�NEN �S�MLER�
-# ===============================================================================
+# ===================================================================
+# CATEGORY DISPLAY NAMES
+# ===================================================================
 
 category-display-names:
-  farm: "�iftlik"
-  ore: "Maden"
-  block: "Blok"
-  food: "Yiyecek"
-  wood: "Odun"
-  rare: "Nadir"
+  farm: "Farm"
+  ore: "Ore"
+  block: "Block"
+  food: "Food"
+  wood: "Wood"
+  rare: "Rare"
   nether: "Nether"
   end: "End"
   mob: "Mob Drop"
-  dye: "Boya"
-  tool: "Alet"
-  armor: "Z�rh"
-  combat: "Sava�"
-  potion: "�ksir"
-  decoration: "Dekorasyon"
-  redstone: "K�z�lta�"
-  misc: "�e�itli"
+  dye: "Dye"
+  tool: "Tool"
+  armor: "Armor"
+  combat: "Combat"
+  potion: "Potion"
+  decoration: "Decoration"
+  redstone: "Redstone"
+  misc: "Miscellaneous"
 
-# ===============================================================================
-# TESL�MAT G�R�NEN �S�MLER�
-# ===============================================================================
+# ===================================================================
+# DELIVERY DISPLAY NAMES
+# ===================================================================
 
 delivery-display-names:
-  gunluk: "G�nl�k Teslimat"
-  maden: "Maden Teslimat�"
-  blok: "Blok Teslimat�"
-  elmas: "Elmas Teslimat�"
-  ciftlik: "�iftlik Teslimat�"
-  buyuk-etkinlik: "B�y�k Etkinlik"
+  daily: "Daily Delivery"
+  mining: "Mining Delivery"
+  blocks: "Block Delivery"
+  diamond: "Diamond Delivery"
+  farming: "Farming Delivery"
+  grand-event: "Grand Event"
 
-# ===============================================================================
-# ETK�NL�K AYARLARI
-# ===============================================================================
+# ===================================================================
+# EVENT SETTINGS
+# ===================================================================
 
 events:
-  # Ayn� anda maksimum aktif etkinlik
+  # Maximum concurrent active events
   max-concurrent: 5
-  
-  # Duyurular
+
+  # Announcements
   announcements:
     start: true
     end: true
-  
-  # Sesler
+
+  # Sounds
   sounds:
     enabled: true
     start: "ENTITY_PLAYER_LEVELUP"
     end: "UI_TOAST_CHALLENGE_COMPLETE"
-  
-  # Title g�sterimi
+
+  # Title display
   title:
     enabled: true
     fade-in: 10
     stay: 70
     fade-out: 20
 
-# ===============================================================================
+# ===================================================================
 # WEBHOOK (Discord)
-# ===============================================================================
-# 
-# Discord webhook entegrasyonu ile etkinlik ba�lang�� ve biti� bildirimlerini
-# Discord sunucunuza otomatik olarak g�nderin.
+# ===================================================================
 #
-# Webhook URL nas�l al�n�r:
-# 1. Discord sunucunuzda bir kanal se�in
-# 2. Kanal Ayarlar� > Entegrasyonlar > Webhooks
-# 3. "Yeni Webhook" olu�turun ve URL'yi kopyalay�n
+# Discord webhook integration for automated event notifications.
 #
-# ===============================================================================
+# How to get a Webhook URL:
+# 1. Choose a channel in your Discord server
+# 2. Channel Settings > Integrations > Webhooks
+# 3. Create a "New Webhook" and copy the URL
+#
+# ===================================================================
 
 webhook:
-  # Webhook'u aktif/pasif yap
-  enabled: true
-  
-  # Discord Webhook URL'si (buraya Discord webhook URL'nizi yap��t�r�n)
+  # Enable/disable webhook
+  enabled: false
+
+  # Discord Webhook URL (paste your Discord webhook URL here)
   url: "YOUR_WEBHOOK_URL_HERE"
-  
-  # @everyone mention'� g�nder (dikkat: spam olabilir!)
+
+  # Send @everyone mention (warning: may be spammy!)
   mention-everyone: false
-  
-  # �����������������������������������������������������������������������������
-  # ETK�NL�K BA�LANGI� EMBED'�
-  # �����������������������������������������������������������������������������
-  # Placeholders:
-  #   {delivery}    - Teslimat ad�
-  #   {item}        - �stenen e�ya
-  #   {category}    - Kategori ad�
-  #   {duration}    - S�re
-  #   {winners}     - Kazanan say�s�
-  #   {end_time}    - Biti� zaman�
-  # �����������������������������������������������������������������������������
+
+  # --- Event Start Embed ---
+  # Placeholders: {delivery}, {item}, {category}, {duration}, {winners}, {end_time}
   start:
-    # Embed ba�l���
-    title: "?? {delivery} Ba�lad�!"
-    
-    # Embed a��klamas� (\\n ile yeni sat�r)
-    description: "Yeni bir teslimat etkinli�i ba�lad�!\\n\\n**?? Teslim Edilecek E�ya:**\\n`{item}`\\n\\n**?? Kategori:** {category}\\n**?? S�re:** {duration}\\n**?? Kazanan Say�s�:** {winners} ki�i\\n\\n*Hemen sunucuya gir ve teslimata ba�la!*"
-    
-    # Embed rengi (hex: #00FF00 veya decimal: 65280)
+    title: "📦 {delivery} Started!"
+    description: "A new delivery event has started!\\n\\n**📋 Item to Deliver:**\\n`{item}`\\n\\n**📂 Category:** {category}\\n**⏰ Duration:** {duration}\\n**🏆 Winners:** {winners} players\\n\\n*Join the server and start delivering!*"
     color: "#00FF00"
-    
-    # Footer metni
-    footer: "VeloDelivery � Teslimat Etkinlik Sistemi"
-    
-    # Thumbnail resmi (URL veya bo� b�rak)
+    footer: "SwiftDelivery | Delivery Event System"
     thumbnail: ""
-    
-    # Author bilgisi
     author:
-      name: "Teslimat" # (sunucu isminiz)
+      name: "Delivery"
       icon: ""
-    
-    # Ek alanlar (fields)
     fields:
-      - name: "Nas�l Kat�l�r�m?"
-        value: "Sunucuya gir ve `/teslimat` komutu ile men�y� a�!"
+      - name: "How to Participate?"
+        value: "Join the server and use `/delivery` to open the menu!"
         inline: false
-  
-  # �����������������������������������������������������������������������������
-  # ETK�NL�K B�T�� EMBED'�
-  # �����������������������������������������������������������������������������
-  # Placeholders:
-  #   {delivery}    - Teslimat ad�
-  #   {item}        - Teslim edilen e�ya
-  #   {category}    - Kategori ad�
-  #   {total}       - Toplam teslimat say�s�
-  #   {participants}- Kat�l�mc� say�s�
-  #   {winners}     - Kazananlar listesi (otomatik olu�turulur)
-  # �����������������������������������������������������������������������������
+
+  # --- Event End Embed ---
+  # Placeholders: {delivery}, {item}, {category}, {total}, {participants}, {winners}
   end:
-    # Embed ba�l���
-    title: "?? {delivery} Sona Erdi!"
-    
-    # Embed a��klamas�
-    description: "Teslimat etkinli�i tamamland�!\\n\\n**?? Teslim Edilen:** `{item}`\\n**?? Kategori:** {category}\\n**?? Kat�l�mc�:** {participants} ki�i\\n**?? Toplam Teslimat:** {total} adet"
-    
-    # Embed rengi
+    title: "🏆 {delivery} Ended!"
+    description: "The delivery event is complete!\\n\\n**📦 Delivered:** `{item}`\\n**📂 Category:** {category}\\n**👥 Participants:** {participants} players\\n**📊 Total Deliveries:** {total} items"
     color: "#FFD700"
-    
-    # Footer metni
-    footer: "VeloDelivery � Teslimat Sistemi"
-    
-    # Thumbnail resmi
+    footer: "SwiftDelivery | Delivery Event System"
     thumbnail: ""
-    
-    # Kazananlar b�l�m�
     winners:
-      # Kazananlar ba�l���
-      title: "??? Kazananlar"
-      
-      # Kazanan format� ({rank}, {player}, {count} kullan�labilir)
-      format: "{medal} **{player}** - {count} teslimat"
-      
-      # Madalya sembolleri
+      title: "🏆 Winners"
+      format: "{medal} **{player}** - {count} deliveries"
       medals:
-        first: "??"
-        second: "??"
-        third: "??"
-        other: "??"
-      
-      # Kazanan yoksa g�sterilecek mesaj
-      no-winners: "*Kimse kat�lmad�*"
-      
-      # Maksimum g�sterilecek kazanan say�s�
+        first: "🥇"
+        second: "🥈"
+        third: "🥉"
+        other: "🔹"
+      no-winners: "*No participants*"
       max-display: 5
 
-# ===============================================================================
-# VER� KAYDETME
-# ===============================================================================
+# ===================================================================
+# DATA STORAGE
+# ===================================================================
 
 data:
   auto-save-interval: 5
