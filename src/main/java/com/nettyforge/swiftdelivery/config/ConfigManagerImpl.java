@@ -21,6 +21,7 @@ public class ConfigManagerImpl implements ConfigManager {
     private DeliveryConfig deliveryConfig;
     private LanguageConfig languageConfig;
     private List<ValidationError> validationErrors;
+    private boolean debug = false;
 
     /**
      * Creates a ConfigManagerImpl with the specified data folder.
@@ -106,6 +107,16 @@ public class ConfigManagerImpl implements ConfigManager {
             validationErrors.add(new ValidationError(
                     "locales/", null, "Failed to load: " + e.getMessage(), ErrorSeverity.ERROR));
         }
+
+        // Load general config for debug flag
+        try {
+            File configFile = new File(dataFolder, "config.yml");
+            if (configFile.exists()) {
+                org.bukkit.configuration.file.YamlConfiguration config = 
+                    org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
+                debug = config.getBoolean("general.debug", false);
+            }
+        } catch (Exception ignored) {}
 
         // Validate loaded configurations
         validationErrors.addAll(validateConfigurations());
@@ -268,5 +279,10 @@ public class ConfigManagerImpl implements ConfigManager {
         validationErrors.clear();
         validationErrors.addAll(validateConfigurations());
         return Collections.unmodifiableList(validationErrors);
+    }
+
+    @Override
+    public boolean isDebug() {
+        return debug;
     }
 }

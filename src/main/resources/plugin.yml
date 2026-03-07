@@ -19,6 +19,11 @@ softdepend:
   - Vault
   - HolographicDisplays
   - DecentHolograms
+  - Nexo
+  - Oraxen
+  - ItemsAdder
+  - Citizens
+  - FancyNpcs
 
 # ===================================================================
 # COMMANDS

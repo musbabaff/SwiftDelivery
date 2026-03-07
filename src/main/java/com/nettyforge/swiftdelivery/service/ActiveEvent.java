@@ -52,6 +52,17 @@ public class ActiveEvent {
         this.playerDeliveries = new ConcurrentHashMap<>();
     }
 
+    // Constructor used by Database providers to recreate an event from DB rows
+    public ActiveEvent(String deliveryName, String resolvedCategory, String resolvedItem, ZonedDateTime endTime) {
+        this.deliveryName = deliveryName;
+        this.resolvedCategory = resolvedCategory;
+        this.resolvedItem = resolvedItem;
+        this.startTime = ZonedDateTime.now();
+        this.endTime = endTime;
+        this.timezone = ZoneId.systemDefault();
+        this.playerDeliveries = new ConcurrentHashMap<>();
+    }
+
     public String getDeliveryName() {
         return deliveryName;
     }
@@ -100,8 +111,15 @@ public class ActiveEvent {
      * @param playerUuid the player's UUID
      * @param amount     the number of items delivered
      */
-    public void recordDelivery(UUID playerUuid, int amount) {
+    public synchronized void recordDelivery(UUID playerUuid, int amount) {
         playerDeliveries.merge(playerUuid, amount, Integer::sum);
+    }
+    
+    /**
+     * Directly add delivery quantity (used by Database loading mechanism)
+     */
+    public synchronized void addDelivery(UUID playerUuid, int amount) {
+        playerDeliveries.put(playerUuid, amount);
     }
 
     /**

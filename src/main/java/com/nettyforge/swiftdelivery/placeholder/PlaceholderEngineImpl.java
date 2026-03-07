@@ -94,7 +94,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
                   .append(winner.playerName())
                   .append(" - ")
                   .append(winner.deliveryCount())
-                  .append(" teslimat\n");
+                  .append(" deliveries\n");
             }
             return sb.toString().trim();
         });

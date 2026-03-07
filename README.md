@@ -28,13 +28,15 @@
 | **📦 Scheduled Deliveries** | Fully automated delivery events with cron-like scheduling |
 | **🏆 Leaderboard System** | Real-time rankings with customizable rewards for top deliverers |
 | **🎨 Custom GUI Menus** | Beautiful, compact inventory menus with custom head textures |
+| **✨ Custom Items Support** | Deep native hooks for Nexo, Oraxen, and ItemsAdder engines |
+| **✉️ Player-to-Player Mail** | Send items securely across the server or network (`/mail send`) |
+| **📈 Courier Progression** | RPG-like leveling system with XP gained per delivery and mail |
+| **🛡️ Bulletproof Anti-Dupe** | Robust UUID transaction logging available securely for admins |
+| **🌈 MiniMessage & Hex** | Full support for modern `<gradient>` and legacy hex formatting |
 | **🌍 Multi-Language** | 8 built-in locales: English, Turkish, German, Spanish, French, Portuguese, Russian, Chinese |
 | **🔔 Discord Webhooks** | Automated Discord notifications with rich embeds for event start/end |
-| **⚡ Chest Delivery** | Right-click a chest to bulk-deliver items — no manual clicking! |
-| **🎁 Flexible Rewards** | Commands, items, economy (Vault), and experience rewards |
-| **📊 Auto Update Checker** | Automatic GitHub release detection with in-game admin notifications |
-| **🔧 Hot Reload** | Reload all configs without restarting the server |
-| **💾 Persistent Data** | Auto-saving with crash recovery for active events |
+| **⚡ Chest & NPC Hooks** | Bulk deliver via chests or instantly hook Citizens/FancyNpcs |
+| **🎁 Flexible Rewards** | Commands, items, Vault, and Courier XP rewards |
 
 ## 📋 Requirements
 
@@ -59,6 +61,8 @@
 | `/delivery` | `swiftdelivery.use` | Opens the delivery menu |
 | `/deliver` | `swiftdelivery.deliver` | Quick-deliver items from inventory |
 | `/deliver chest` | `swiftdelivery.deliver.chest` | Deliver items from a chest |
+| `/delivery profile` | `swiftdelivery.use` | View your Courier Level, XP, and Mail Inbox |
+| `/mail send <player>` | `swiftdelivery.mail` | Send the held item to another player for a configurable fee |
 
 ### Admin Commands
 | Command | Permission | Description |
@@ -68,6 +72,7 @@
 | `/swiftdelivery stop <name>` | `swiftdelivery.admin.stop` | Stop an active delivery event |
 | `/swiftdelivery list` | `swiftdelivery.admin.list` | List all deliveries and their status |
 | `/swiftdelivery status` | `swiftdelivery.admin.status` | View plugin status and diagnostics |
+| `/swiftdelivery adminlog <player>` | `swiftdelivery.admin` | View the last 15 delivery transaction logs for an audit |
 
 ## ⚙️ Configuration
 

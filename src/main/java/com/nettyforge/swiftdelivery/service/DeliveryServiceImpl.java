@@ -116,7 +116,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
             if (deliverEvent.isCancelled()) {
                 if (deliverEvent.getCancelReason() != null) {
-                    player.sendMessage("§cTeslimat iptal edildi: " + deliverEvent.getCancelReason());
+                    player.sendMessage("§cDelivery cancelled: " + deliverEvent.getCancelReason());
                 }
                 return false;
             }

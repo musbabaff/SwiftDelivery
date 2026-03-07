@@ -68,6 +68,9 @@ public class CommandHandler {
     private final Logger logger;
     private DeliveryService deliveryService;
     private Runnable reloadCallback;
+    private BiConsumer<String, Long> manualEndScheduler;
+    private Runnable webhookTester;
+    private com.nettyforge.swiftdelivery.data.DatabaseManager databaseManager;
 
     // ═══════════════════════════════════════════════════════════════
     // CONSTRUCTOR
@@ -95,6 +98,18 @@ public class CommandHandler {
 
     public void setReloadCallback(Runnable callback) {
         this.reloadCallback = callback;
+    }
+
+    public void setManualEndScheduler(BiConsumer<String, Long> manualEndScheduler) {
+        this.manualEndScheduler = manualEndScheduler;
+    }
+
+    public void setWebhookTester(Runnable webhookTester) {
+        this.webhookTester = webhookTester;
+    }
+
+    public void setDatabaseManager(com.nettyforge.swiftdelivery.data.DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -132,7 +147,9 @@ public class CommandHandler {
             case "top", "siralama" -> handleTop(sender, subArgs);
             case "categories", "cat", "kategoriler" -> handleCategories(sender);
             case "toggle", "ac", "kapat" -> handleToggle(sender, subArgs);
+            case "adminlog", "alog" -> handleAdminLog(sender, subArgs);
             case "test" -> handleTest(sender, subArgs);
+            case "_internal_npc_open" -> handleInternalNpcOpen(sender, subArgs);
             default -> {
                 msg(sender, "&c✗ Bilinmeyen komut: &f" + sub);
                 msg(sender, "&7Yardım için: &e/dc help");
@@ -155,7 +172,7 @@ public class CommandHandler {
                 completions.add("categories");
             }
             if (hasPerm(sender, PERM_ADMIN_EVENT)) {
-                completions.addAll(Arrays.asList("list", "status", "start", "stop", "top", "toggle", "test"));
+                completions.addAll(Arrays.asList("list", "status", "start", "stop", "top", "toggle", "adminlog", "test"));
             }
 
             return filter(completions, args[0]);
@@ -236,6 +253,22 @@ public class CommandHandler {
             logErrors(result.errors());
         }
 
+        return true;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // INTERNAL NPC KOMUTU
+    // ═══════════════════════════════════════════════════════════════
+    private boolean handleInternalNpcOpen(String sender, String[] args) {
+        if (!sender.equalsIgnoreCase("CONSOLE") && !hasPerm(sender, PERM_ADMIN)) {
+            noPermission(sender);
+            return true;
+        }
+        if (args.length < 1) return true;
+        org.bukkit.entity.Player target = org.bukkit.Bukkit.getPlayer(args[0]);
+        if (target != null) {
+            org.bukkit.Bukkit.dispatchCommand(target, "delivery");
+        }
         return true;
     }
 
@@ -758,11 +791,7 @@ public class CommandHandler {
         };
     }
 
-    private Runnable webhookTester;
 
-    public void setWebhookTester(Runnable tester) {
-        this.webhookTester = tester;
-    }
 
     private void testDeliver(String sender, String deliveryName) {
         if (deliveryService == null) {
@@ -953,30 +982,76 @@ public class CommandHandler {
         if (manualEndScheduler != null) {
             manualEndScheduler.accept(deliveryName, durationMinutes);
             logger.info(
-                    "[SwiftDelivery] Etkinlik " + durationMinutes + " dakika sonra otomatik bitecek: " + deliveryName);
+                    "[SwiftDelivery] Event will end automatically in " + durationMinutes + " minutes: " + deliveryName);
         } else {
-            logger.warning("[SwiftDelivery] Manuel bitiş zamanlayıcısı ayarlanmamış: " + deliveryName);
+            logger.warning("[SwiftDelivery] Manual end scheduler not set: " + deliveryName);
         }
     }
 
-    /**
-     * Manuel bitiş zamanlayıcısı için callback setter.
-     */
-    private java.util.function.BiConsumer<String, Long> manualEndScheduler;
 
-    public void setManualEndScheduler(java.util.function.BiConsumer<String, Long> scheduler) {
-        this.manualEndScheduler = scheduler;
-    }
 
-    private void msg(String player, String message) {
-        if (player != null && !player.isEmpty()) {
-            messageSender.accept(player, colorize(message));
+    private void msg(String to, String msg) {
+        if (msg == null || msg.isEmpty()) {
+            messageSender.accept(to, "");
+            return;
         }
+        messageSender.accept(to, msg);
     }
 
-    private String colorize(String text) {
-        return text.replace("&", "§");
+    // ═══════════════════════════════════════════════════════════════
+    // ADMIN LOG KOMUTU
+    // ═══════════════════════════════════════════════════════════════
+    private boolean handleAdminLog(String sender, String[] args) {
+        if (!hasPerm(sender, PERM_ADMIN)) {
+            noPermission(sender);
+            return true;
+        }
+
+        if (args.length == 0) {
+            msg(sender, "&cUsage: /swiftdelivery adminlog <player>");
+            return true;
+        }
+
+        if (databaseManager == null) {
+            msg(sender, "&cDatabase manager is not active.");
+            return true;
+        }
+
+        String targetName = args[0];
+        msg(sender, "&7Searching for the last 15 transaction records for &e" + targetName + "&7...");
+
+        org.bukkit.Bukkit.getScheduler().runTaskAsynchronously(
+            org.bukkit.Bukkit.getPluginManager().getPlugin("SwiftDelivery"),
+            () -> {
+                // Not ideal for heavy servers if UUID lookup blocks, but Bukkit deprecation allows it
+                @SuppressWarnings("deprecation")
+                org.bukkit.OfflinePlayer target = org.bukkit.Bukkit.getOfflinePlayer(targetName);
+                
+                if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
+                    msg(sender, "&cPlayer not found: " + targetName);
+                    return;
+                }
+
+                databaseManager.getPlayerTransactions(target.getUniqueId(), 15).thenAccept(logs -> {
+                    if (logs.isEmpty()) {
+                        msg(sender, "&cNo transaction records found for this player.");
+                        return;
+                    }
+                    
+                    msg(sender, "&8&m----------------------------------------");
+                    msg(sender, " &6&l" + target.getName() + " &eTransaction Logs");
+                    msg(sender, "&8&m----------------------------------------");
+                    for (String log : logs) {
+                        msg(sender, "&7" + log);
+                    }
+                    msg(sender, "&8&m----------------------------------------");
+                });
+            }
+        );
+
+        return true;
     }
+
 
     // ═══════════════════════════════════════════════════════════════
     // GETTER METODLARI

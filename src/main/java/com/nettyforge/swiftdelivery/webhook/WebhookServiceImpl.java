@@ -1,5 +1,6 @@
 package com.nettyforge.swiftdelivery.webhook;
 
+import com.nettyforge.swiftdelivery.config.ConfigManager;
 import com.nettyforge.swiftdelivery.model.EmbedConfig;
 import com.nettyforge.swiftdelivery.model.PlaceholderContext;
 import com.nettyforge.swiftdelivery.model.Winner;
@@ -27,6 +28,7 @@ public class WebhookServiceImpl implements WebhookService {
     private static final int DEFAULT_COLOR = 0x000000;
 
     private final PlaceholderEngine placeholderEngine;
+    private final ConfigManager configManager;
     private final HttpClient httpClient;
 
     // Global config settings
@@ -35,8 +37,8 @@ public class WebhookServiceImpl implements WebhookService {
     private boolean globalMentionEveryone = false;
 
     // Start embed config
-    private String startTitle = "📦 {delivery_name} Başladı!";
-    private String startDescription = "Yeni bir teslimat etkinliği başladı!";
+    private String startTitle = "📦 {delivery_name} Started!";
+    private String startDescription = "A new delivery event has started!";
     private String startColor = "#00FF00";
     private String startFooter = "SwiftDelivery";
     private String startThumbnail = "";
@@ -44,31 +46,33 @@ public class WebhookServiceImpl implements WebhookService {
     private String startAuthorIcon = "";
 
     // End embed config
-    private String endTitle = "🏆 {delivery_name} Sona Erdi!";
-    private String endDescription = "Teslimat etkinliği tamamlandı!";
+    private String endTitle = "🏆 {delivery_name} Ended!";
+    private String endDescription = "The delivery event is complete!";
     private String endColor = "#FFD700";
     private String endFooter = "SwiftDelivery";
     private String endThumbnail = "";
 
     // Winners config
-    private String winnersTitle = "🎖️ Kazananlar";
-    private String winnerFormat = "{medal} **{player}** - {count} teslimat";
+    private String winnersTitle = "🎖️ Winners";
+    private String winnerFormat = "{medal} **{player}** - {count} deliveries";
     private String medalFirst = "🥇";
     private String medalSecond = "🥈";
     private String medalThird = "🥉";
     private String medalOther = "🏅";
-    private String noWinnersMessage = "*Kimse katılmadı*";
+    private String noWinnersMessage = "*No one participated*";
     private int maxWinnersDisplay = 10;
 
-    public WebhookServiceImpl(PlaceholderEngine placeholderEngine) {
+    public WebhookServiceImpl(PlaceholderEngine placeholderEngine, ConfigManager configManager) {
         this.placeholderEngine = placeholderEngine;
+        this.configManager = configManager;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(TIMEOUT)
                 .build();
     }
 
-    public WebhookServiceImpl(PlaceholderEngine placeholderEngine, HttpClient httpClient) {
+    public WebhookServiceImpl(PlaceholderEngine placeholderEngine, ConfigManager configManager, HttpClient httpClient) {
         this.placeholderEngine = placeholderEngine;
+        this.configManager = configManager;
         this.httpClient = httpClient;
     }
 
@@ -263,7 +267,9 @@ public class WebhookServiceImpl implements WebhookService {
                     .thenApply(response -> {
                         int statusCode = response.statusCode();
                         if (statusCode >= 200 && statusCode < 300) {
-                            LOGGER.info("Webhook sent successfully to " + url);
+                            if (configManager != null && configManager.isDebug()) {
+                                LOGGER.info("Webhook sent successfully to " + url);
+                            }
                             return WebhookResult.success(statusCode);
                         } else {
                             String errorMsg = "Webhook request failed with status " + statusCode;

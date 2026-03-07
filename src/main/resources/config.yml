@@ -4,7 +4,7 @@
 # │               Premium Delivery Event System by NettyForge                   │
 # │                            Version: 1.0.0                                   │
 # │                                                                             │
-# │  Documentation: https://github.com/musbabaff/SwiftDelivery/wiki            │
+# │  Documentation: https://github.com/musbabaff/SwiftDelivery/wiki             │
 # │                                                                             │
 # └─────────────────────────────────────────────────────────────────────────────┘
 
@@ -20,18 +20,18 @@ general:
 
   # Timezone for event scheduling
   # See: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  timezone: Europe/Istanbul
+  timezone: America/Los_Angeles
 
   # Enable debug mode for verbose console logging
   # Only enable this when troubleshooting issues
   debug: false
 
 # ┌───────────────────────────────────────────────┐
-# │  CATEGORY DISPLAY NAMES                        │
-# │                                                │
-# │  Custom names shown in the GUI for each        │
-# │  item category. Must match keys in             │
-# │  categories.yml.                               │
+# │  CATEGORY DISPLAY NAMES                       │
+# │                                               │
+# │  Custom names shown in the GUI for each       │
+# │  item category. Must match keys in            │
+# │  categories.yml.                              │
 # └───────────────────────────────────────────────┘
 
 category-display-names:
@@ -54,11 +54,11 @@ category-display-names:
   misc: "Miscellaneous"
 
 # ┌───────────────────────────────────────────────┐
-# │  DELIVERY DISPLAY NAMES                        │
-# │                                                │
-# │  Custom names for delivery events shown in     │
-# │  menus, broadcasts, and webhooks.              │
-# │  Must match keys in deliveries.yml.            │
+# │  DELIVERY DISPLAY NAMES                       │
+# │                                               │
+# │  Custom names for delivery events shown in    │
+# │  menus, broadcasts, and webhooks.             │
+# │  Must match keys in deliveries.yml.           │
 # └───────────────────────────────────────────────┘
 
 delivery-display-names:
@@ -70,10 +70,10 @@ delivery-display-names:
   grand-event: "Grand Event"
 
 # ┌───────────────────────────────────────────────┐
-# │  EVENT SETTINGS                                │
-# │                                                │
-# │  Global settings that apply to all delivery    │
-# │  events unless overridden per-delivery.        │
+# │  EVENT SETTINGS                               │
+# │                                               │
+# │  Global settings that apply to all delivery   │
+# │  events unless overridden per-delivery.       │
 # └───────────────────────────────────────────────┘
 
 events:
@@ -100,15 +100,15 @@ events:
     fade-out: 20
 
 # ┌───────────────────────────────────────────────┐
-# │  DISCORD WEBHOOK                               │
-# │                                                │
-# │  Sends rich embed notifications to Discord     │
-# │  when delivery events start and end.           │
-# │                                                │
-# │  How to get a Webhook URL:                     │
-# │  1. Choose a channel in your Discord server    │
-# │  2. Channel Settings > Integrations > Webhooks │
-# │  3. Create "New Webhook" and copy the URL      │
+# │  DISCORD WEBHOOK                              │
+# │                                               │
+# │  Sends rich embed notifications to Discord    │
+# │  when delivery events start and end.          │
+# │                                               │
+# │  How to get a Webhook URL:                    │
+# │  1. Choose a channel in your Discord server   │
+# │  2. Channel Settings > Integrations > Webhooks│
+# │  3. Create "New Webhook" and copy the URL     │
 # └───────────────────────────────────────────────┘
 
 webhook:
@@ -175,17 +175,52 @@ webhook:
       no-winners: "*No participants*"
       max-display: 5
 
+  # Deliveries Cosmetics
+  cosmetics:
+    # Sound when a player delivers an item
+    delivery-sound: "ENTITY_PLAYER_LEVELUP"
+    # Particle effect around the player when delivering
+    delivery-particle: "VILLAGER_HAPPY"
+    # Action bar message
+    delivery-action-bar: "<green><bold>SUCCESS!</bold></green> <gray>Item Delivered.</gray>"
+
+    # Sound when a player sends P2P mail
+    mail-send-sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    mail-send-particle: "HEART"
+
 # ┌───────────────────────────────────────────────┐
-# │  DATA STORAGE                                  │
-# │                                                │
-# │  Controls how event data is persisted          │
-# │  for crash recovery and leaderboards.          │
+# │  DATABASE CONNECTION                          │
+# │                                               │
+# │  Controls how event data and leaderboards     │
+# │  are stored across your server/network.       │
 # └───────────────────────────────────────────────┘
 
-data:
+database:
 
-  # How often to auto-save event data (in minutes)
-  auto-save-interval: 5
+  # Database Engine
+  # sqlite -> Recommended for single servers (stores in plugins/SwiftDelivery/data.db)
+  # mysql  -> Required for BungeeCord/Velocity networks to sync data across servers
+  type: sqlite
 
-  # Data file name (stored in plugin folder)
-  file: "data.yml"
+  # MySQL connection settings
+  # Only used if type is set to "mysql"
+  mysql:
+    host: localhost
+    port: 3306
+    database: swiftdelivery
+    username: root
+    password: ""
+    use-ssl: false
+    # Maximum number of concurrent connections (HikariCP)
+    pool-size: 10
+
+# ┌───────────────────────────────────────────────┐
+# │  NPC SETTINGS                                 │
+# │                                               │
+# │  Ids or Names of NPCs that open the menu      │
+# │  when clicked (Citizens/FancyNpcs).           │
+# └───────────────────────────────────────────────┘
+
+npc-ids:
+  - "1"
+  - "DeliveryNPC"

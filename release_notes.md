@@ -4,6 +4,38 @@ All notable changes to SwiftDelivery are documented here.
 
 ---
 
+## v1.5.0 — The Game-Changer Expansion (March 2026)
+*The highly demanding premium feature update!*
+
+### ✨ Custom Items Engines natively supported
+- Deep natively supported parsers engineered for `Nexo`, `Oraxen`, and `ItemsAdder`.
+- Deliver `NEXO:ruby_sword` or `ITEMSADDER:custom_block` through the config with zero hassle.
+- Fallback mechanisms intact for `VANILLA:DIAMOND`.
+
+### ✉️ P2P Mail System & Profiles
+- **Mail System:** Secure cross-server asynchronous system sending items offline (`/mail send`).
+- **Profile GUI:** Instantly track Courier XP and Level via `/delivery profile`. Claim Mail rewards dynamically!
+- **Vault Fees:** Charge configurable amounts via Vault when players send P2P Mail.
+
+### 📈 Courier Progression System
+- Gain `Courier XP` every time you securely send Mail or complete successful event deliveries.
+- Climb the Courier Leveling System uniquely built into `SwiftDelivery`.
+
+### 🛡️ Bulletproof Anti-Dupe 
+- Newly crafted `swift_transaction_logs` schema tracks 100% of Delivery & Mail transfers using Transaction UUIDs.
+- Admins can instantly audit ANY player’s deliveries in-game: `/swiftdelivery adminlog <player>`.
+
+### 🌈 Next-Gen Cosmetics & Messaging
+- Universal `MiniMessage` parsing implemented natively. Use `<gradient:red:blue>` freely in any local `.yml` file.
+- `AdventureHook` backwards-compatibility securely preserves legacy color formats (`&c`, `&#FF0000`).
+- Attach premium `Sound` and `Particle` effects immediately upon player deliveries. Fully configurable.
+
+### ⚡ NPC & Hub Native Integrations
+- Boundless hooks integrated for `Citizens` and `FancyNpcs`.
+- Use the fallback internal command `/swiftdelivery _internal_npc_open` for generic NPC plugins like ZNPCs.
+
+---
+
 ## v1.0.0 — The Rebirth (March 2026)
 
 ### 🎉 Complete Rebranding

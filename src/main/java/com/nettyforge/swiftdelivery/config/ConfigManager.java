@@ -67,4 +67,11 @@ public interface ConfigManager {
      * @return true if all configurations are valid
      */
     boolean isValid();
+
+    /**
+     * Checks if debug mode is enabled.
+     *
+     * @return true if debug mode is enabled
+     */
+    boolean isDebug();
 }

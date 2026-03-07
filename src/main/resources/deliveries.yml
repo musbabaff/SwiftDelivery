@@ -2,9 +2,9 @@
 # │                                                                             │
 # │                    SwiftDelivery — Delivery Definitions                     │
 # │                                                                             │
-# │  This file defines all delivery events, their schedules, rewards,          │
-# │  and behavior. Each delivery is a timed event where players compete        │
-# │  to deliver specific items for rankings and rewards.                       │
+# │  This file defines all delivery events, their schedules, rewards,           │
+# │  and behavior. Each delivery is a timed event where players compete         │
+# │  to deliver specific items for rankings and rewards.                        │
 # │                                                                             │
 # └─────────────────────────────────────────────────────────────────────────────┘
 #
@@ -34,24 +34,24 @@
 # │  REWARDS                                                                    │
 # │                                                                             │
 # │  Reward types: "item", "command", "both"                                    │
-# │  Rank ranges: "1", "2", "3", "4-10", "11-25", "default"                    │
-# │  Placeholder: {player} = winner's name, {rank} = winner's rank             │
+# │  Rank ranges: "1", "2", "3", "4-10", "11-25", "default"                     │
+# │  Placeholder: {player} = winner's name, {rank} = winner's rank              │
 # │                                                                             │
 # ├─────────────────────────────────────────────────────────────────────────────┤
 # │  WEBHOOK (per-delivery override)                                            │
 # │                                                                             │
 # │  webhook:                                                                   │
 # │    enabled: true/false  → Enable webhook for this delivery                  │
-# │    url: ""              → Empty = use global URL from config.yml             │
-# │                         → Set a URL to send to a different channel           │
+# │    url: ""              → Empty = use global URL from config.yml            │
+# │                         → Set a URL to send to a different channel          │
 # │                                                                             │
 # └─────────────────────────────────────────────────────────────────────────────┘
 
 deliveries:
 
   # ┌───────────────────────────────────────────────┐
-  # │  DAILY DELIVERY                                │
-  # │  Every day at 20:00 — Random item, 1 hour      │
+  # │  DAILY DELIVERY                               │
+  # │  Every day at 20:00 — Random item, 1 hour     │
   # └───────────────────────────────────────────────┘
 
   daily:
@@ -166,8 +166,8 @@ deliveries:
       url: ""
 
   # ┌───────────────────────────────────────────────┐
-  # │  BLOCK DELIVERY                                │
-  # │  Every Sunday at 14:00 — Block category         │
+  # │  BLOCK DELIVERY                               │
+  # │  Every Sunday at 14:00 — Block category       │
   # └───────────────────────────────────────────────┘
 
   blocks:
@@ -214,8 +214,8 @@ deliveries:
       url: ""
 
   # ┌───────────────────────────────────────────────┐
-  # │  DIAMOND DELIVERY                              │
-  # │  Every Friday at 19:00 — Fixed diamond item     │
+  # │  DIAMOND DELIVERY                             │
+  # │  Every Friday at 19:00 — Fixed diamond item   │
   # └───────────────────────────────────────────────┘
 
   diamond:
@@ -278,8 +278,8 @@ deliveries:
       url: ""
 
   # ┌───────────────────────────────────────────────┐
-  # │  FARMING DELIVERY                              │
-  # │  Every Wednesday at 21:00 — Farm category       │
+  # │  FARMING DELIVERY                             │
+  # │  Every Wednesday at 21:00 — Farm category     │
   # └───────────────────────────────────────────────┘
 
   farming:
@@ -326,9 +326,9 @@ deliveries:
       url: ""
 
   # ┌───────────────────────────────────────────────┐
-  # │  GRAND EVENT                                   │
-  # │  Every Saturday at 20:00 — 3-hour marathon      │
-  # │  Massive rewards, custom webhook channel        │
+  # │  GRAND EVENT                                  │
+  # │  Every Saturday at 20:00 — 3-hour marathon    │
+  # │  Massive rewards, custom webhook channel      │
   # └───────────────────────────────────────────────┘
 
   grand-event:

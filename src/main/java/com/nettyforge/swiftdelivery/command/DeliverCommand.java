@@ -1,6 +1,7 @@
 package com.nettyforge.swiftdelivery.command;
 
 import com.nettyforge.swiftdelivery.gui.DeliveryGUI;
+import com.nettyforge.swiftdelivery.gui.ProfileGUI;
 import com.nettyforge.swiftdelivery.service.ActiveEvent;
 import com.nettyforge.swiftdelivery.service.DeliveryService;
 import org.bukkit.Bukkit;
@@ -22,15 +23,17 @@ public class DeliverCommand {
     private final BiConsumer<String, String> messageSender;
 
     private final DeliveryGUI deliveryGUI;
+    private final ProfileGUI profileGUI;
     private DeliveryService deliveryService;
 
     private static final String PREFIX = "&e&lV&6elo&e&lD&6elivery &8» &r";
 
     public DeliverCommand(BiFunction<String, String, Boolean> permissionChecker,
-            BiConsumer<String, String> messageSender, DeliveryGUI deliveryGUI) {
+            BiConsumer<String, String> messageSender, DeliveryGUI deliveryGUI, ProfileGUI profileGUI) {
         this.permissionChecker = permissionChecker;
         this.messageSender = messageSender;
         this.deliveryGUI = deliveryGUI;
+        this.profileGUI = profileGUI;
     }
 
     public void setDeliveryService(DeliveryService deliveryService) {
@@ -66,6 +69,10 @@ public class DeliverCommand {
             }
             case "bilgi", "info" -> {
                 showActiveInfo(sender);
+                yield true;
+            }
+            case "profile", "profil", "inbox", "stats" -> {
+                if (profileGUI != null) profileGUI.openProfile(player);
                 yield true;
             }
             default -> {
@@ -211,7 +218,7 @@ public class DeliverCommand {
 
     public List<String> handleTeslimatTabComplete(String sender, String[] args) {
         if (args.length == 1)
-            return filter(Arrays.asList("help", "top", "bilgi"), args[0]);
+            return filter(Arrays.asList("help", "top", "bilgi", "profile"), args[0]);
         return List.of();
     }
 

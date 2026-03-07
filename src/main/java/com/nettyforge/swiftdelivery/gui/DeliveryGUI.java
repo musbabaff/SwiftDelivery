@@ -1,6 +1,7 @@
 package com.nettyforge.swiftdelivery.gui;
 
 import com.nettyforge.swiftdelivery.config.ConfigManager;
+import com.nettyforge.swiftdelivery.hook.item.ItemFactory;
 import com.nettyforge.swiftdelivery.service.ActiveEvent;
 import com.nettyforge.swiftdelivery.service.DeliveryService;
 import org.bukkit.Bukkit;
@@ -22,9 +23,9 @@ public class DeliveryGUI {
     private static final Logger logger = Logger.getLogger("SwiftDelivery");
     private final ConfigManager configManager;
     private final DeliveryService deliveryService;
+    private final ItemFactory itemFactory;
 
     private final Map<String, String> itemDisplayNames = new ConcurrentHashMap<>();
-    private final Map<String, Double> itemPrices = new ConcurrentHashMap<>();
     private final Map<String, String> categoryDisplayNames = new ConcurrentHashMap<>();
     private final Map<String, String> deliveryDisplayNames = new ConcurrentHashMap<>();
     private final Map<String, String> categoryHeads = new ConcurrentHashMap<>();
@@ -51,11 +52,11 @@ public class DeliveryGUI {
     private static final String SMALL = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ";
 
     // Menu baslik sabitleri
-    public static final String MAIN_TITLE_TR = "Teslimat Menüsü";
+    public static final String MAIN_TITLE_TR = "Delivery Menu";
     public static final String MAIN_TITLE_EN = "Delivery Menu";
-    public static final String DELIVERY_PREFIX_TR = "Teslimat: ";
+    public static final String DELIVERY_PREFIX_TR = "Delivery: ";
     public static final String DELIVERY_PREFIX_EN = "Delivery: ";
-    public static final String LEADERBOARD_TITLE_TR = "Sıralama";
+    public static final String LEADERBOARD_TITLE_TR = "Ranklama";
     public static final String LEADERBOARD_TITLE_EN = "Leaderboard";
 
     // Uyumluluk icin varsayilan degerler
@@ -63,9 +64,10 @@ public class DeliveryGUI {
     public static final String DELIVERY_PREFIX = DELIVERY_PREFIX_TR;
     public static final String LEADERBOARD_TITLE = LEADERBOARD_TITLE_TR;
 
-    public DeliveryGUI(ConfigManager cm, DeliveryService ds) {
+    public DeliveryGUI(ConfigManager cm, DeliveryService ds, ItemFactory itemFactory) {
         this.configManager = cm;
         this.deliveryService = ds;
+        this.itemFactory = itemFactory;
         initDefaults();
     }
 
@@ -173,15 +175,13 @@ public class DeliveryGUI {
         int loadedCount = 0;
         for (String key : itemsSection.getKeys(false)) {
             String displayName = itemsSection.getString(key + ".display-name");
-            double price = itemsSection.getDouble(key + ".price", 0);
             if (displayName != null) {
-                itemDisplayNames.put(key.toUpperCase(), displayName);
+                // Remove formatting specific to the yml node and store the custom name
+                itemDisplayNames.put(key.toUpperCase(), org.bukkit.ChatColor.translateAlternateColorCodes('&', displayName));
                 loadedCount++;
             }
-            if (price > 0)
-                itemPrices.put(key.toUpperCase(), price);
         }
-        logger.info(loadedCount + " esya yuklendi (items.yml)");
+        logger.info(loadedCount + " items loaded (items.yml)");
     }
 
     public static String sc(String text) {
@@ -197,12 +197,29 @@ public class DeliveryGUI {
 
     public String getItemDisplayName(String itemName) {
         if (itemName == null)
-            return "Bilinmiyor";
-        return itemDisplayNames.getOrDefault(itemName.toUpperCase(), itemName.replace("_", " "));
-    }
-
-    public double getItemPrice(String itemName) {
-        return itemPrices.getOrDefault(itemName.toUpperCase(), 0.0);
+            return "Unknown";
+        String customName = itemDisplayNames.get(itemName.toUpperCase());
+        if (customName != null) {
+            return customName;
+        }
+        
+        // Native vanilla formatting fallback
+        Material mat = Material.getMaterial(itemName.toUpperCase());
+        if (mat != null) {
+            // Converts "DIAMOND_SWORD" to "Diamond Sword" nicely for English servers
+            // But this will be dynamically translated by client natively via translatable components later!
+            String matName = mat.toString().toLowerCase().replace("_", " ");
+            String[] words = matName.split(" ");
+            StringBuilder sb = new StringBuilder();
+            for (String word : words) {
+                if (!word.isEmpty()) {
+                    sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
+                }
+            }
+            return sb.toString().trim();
+        }
+        
+        return itemName.replace("_", " ");
     }
 
     public String getCategoryDisplayName(String catName) {
@@ -301,7 +318,7 @@ public class DeliveryGUI {
         }
 
         // Baslik ikonu (slot 4 - ust orta)
-        String titleLore = isEnglish ? "Delivery Event System" : "Teslimat Etkinlik Sistemi";
+        String titleLore = isEnglish ? "Delivery Event System" : "Delivery Event System";
         inv.setItem(4, createHead(HEAD_DELIVERY, "§e§lSwiftDelivery", Arrays.asList(
                 "", "§7" + titleLore, "")));
 
@@ -326,8 +343,8 @@ public class DeliveryGUI {
         }
 
         // Alt butonlar - satir 3 (simetrik: slot 30 ve 32)
-        String leaderboardName = isEnglish ? "Leaderboard" : "Sıralama";
-        String leaderboardLore = isEnglish ? "See top deliverers" : "En çok teslim edenleri gör";
+        String leaderboardName = isEnglish ? "Leaderboard" : "Ranklama";
+        String leaderboardLore = isEnglish ? "See top deliverers" : "See top deliverers";
         String clickText = isEnglish ? "Click" : "Tıkla";
         inv.setItem(30, createHead(HEAD_TOP, "§b" + leaderboardName, Arrays.asList(
                 "", "§7" + leaderboardLore, "", "§a" + clickText)));
@@ -387,16 +404,16 @@ public class DeliveryGUI {
 
     private String parseScheduleToReadable(String schedule) {
         if (schedule == null || schedule.isEmpty()) {
-            return "en".equals(getCurrentLanguage()) ? "Unknown" : "Bilinmiyor";
+            return "en".equals(getCurrentLanguage()) ? "Unknown" : "Unknown";
         }
         String lower = schedule.toLowerCase();
         boolean isEnglish = "en".equals(getCurrentLanguage());
 
         Map<String, String> daysTR = Map.of(
-                "every day", "Her gün", "every monday", "Her Pazartesi",
-                "every tuesday", "Her Salı", "every wednesday", "Her Çarşamba",
-                "every thursday", "Her Perşembe", "every friday", "Her Cuma",
-                "every saturday", "Her Cumartesi", "every sunday", "Her Pazar");
+                "every day", "Every day", "every monday", "Every Monday",
+                "every tuesday", "Every Tuesday", "every wednesday", "Every Wednesday",
+                "every thursday", "Every Thursday", "every friday", "Every Friday",
+                "every saturday", "Every Fridayrtesi", "every sunday", "Every Sunday");
         Map<String, String> daysEN = Map.of(
                 "every day", "Every day", "every monday", "Every Monday",
                 "every tuesday", "Every Tuesday", "every wednesday", "Every Wednesday",
@@ -421,14 +438,16 @@ public class DeliveryGUI {
         int totalCount = event.getPlayerDeliveries().values().stream().mapToInt(Integer::intValue).sum();
         int rank = calculateRank(event, player.getUniqueId());
 
-        String itemText = isEnglish ? "Item" : "Eşya";
-        String categoryText = isEnglish ? "Category" : "Kategori";
-        String totalText = isEnglish ? "Total" : "Toplam";
-        String yoursText = isEnglish ? "Yours" : "Senin";
-        String rankText = isEnglish ? "Rank" : "Sıra";
-        String clickDeliverText = isEnglish ? "Click to deliver" : "Tıkla ve teslim et";
+        String itemText = isEnglish ? "Item" : "Item";
+        String categoryText = isEnglish ? "Category" : "Category";
+        String totalText = isEnglish ? "Total" : "Total";
+        String yoursText = isEnglish ? "Yours" : "Yours";
+        String rankText = isEnglish ? "Rank" : "Rank";
+        String clickDeliverText = isEnglish ? "Click to deliver" : "Click to deliver";
 
-        return createHead(HEAD_DELIVERY, "§a" + deliveryName, Arrays.asList(
+        ItemStack customItem = itemFactory.createItem(event.getResolvedItem());
+
+        return formatItem(customItem, "§a" + deliveryName, Arrays.asList(
                 "",
                 "§7" + itemText + " §f" + itemName,
                 "§7" + categoryText + " §f" + getCategoryDisplayName(event.getResolvedCategory()),
@@ -438,6 +457,18 @@ public class DeliveryGUI {
                 "§7" + rankText + " §e#" + (rank > 0 ? rank : "-"),
                 "",
                 "§a" + clickDeliverText));
+    }
+
+    private ItemStack formatItem(ItemStack baseItem, String name, List<String> lore) {
+        if (baseItem == null || baseItem.getType() == Material.AIR) baseItem = new ItemStack(Material.PAPER);
+        ItemStack item = baseItem.clone();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (name != null) meta.setDisplayName(name);
+            if (lore != null) meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -466,11 +497,11 @@ public class DeliveryGUI {
         int rank = calculateRank(event, player.getUniqueId());
 
         // Dil string'leri
-        String requiredItemText = isEnglish ? "Required Item" : "İstenen Eşya";
-        String categoryText = isEnglish ? "Category" : "Kategori";
-        String totalDeliveriesText = isEnglish ? "Total Deliveries" : "Toplam Teslimat";
-        String yourDeliveriesText = isEnglish ? "Your Deliveries" : "Senin Teslimatın";
-        String yourRankText = isEnglish ? "Your Rank" : "Sıran";
+        String requiredItemText = isEnglish ? "Required Item" : "İstenen Item";
+        String categoryText = isEnglish ? "Category" : "Category";
+        String totalDeliveriesText = isEnglish ? "Total Deliveries" : "Total Teslimat";
+        String yourDeliveriesText = isEnglish ? "Your Deliveries" : "Yours Teslimatın";
+        String yourRankText = isEnglish ? "Your Rank" : "Rankn";
         String deliverFromInvText = isEnglish ? "Deliver from Inventory" : "Envanterden Teslim Et";
         String allItemsText = isEnglish ? "All your" : "Envanterindeki tüm";
         String itemsDeliverText = isEnglish ? "items will be delivered" : "eşyalarını teslim et";
@@ -483,7 +514,9 @@ public class DeliveryGUI {
         String returnMainText = isEnglish ? "Return to main menu" : "Ana menüye dön";
 
         // Bilgi (slot 13 - üst orta)
-        inv.setItem(13, createHead(HEAD_DELIVERY, "§e" + deliveryName, Arrays.asList(
+        ItemStack baseItem = itemFactory.createItem(event.getResolvedItem());
+
+        inv.setItem(13, formatItem(baseItem, "§e" + deliveryName, Arrays.asList(
                 "",
                 "§7" + requiredItemText,
                 "§f  " + itemName,
@@ -536,7 +569,7 @@ public class DeliveryGUI {
         var events = deliveryService.getAllActiveEvents();
         if (events.isEmpty()) {
             String noActiveText = isEnglish ? "No active delivery" : "Aktif teslimat yok";
-            String waitingText = isEnglish ? "Waiting for delivery event" : "Sıralama için teslimat bekleniyor";
+            String waitingText = isEnglish ? "Waiting for delivery event" : "Ranklama için teslimat bekleniyor";
             inv.setItem(22, createHead(HEAD_HELP, "§7" + noActiveText, Arrays.asList(
                     "",
                     "§8" + waitingText)));

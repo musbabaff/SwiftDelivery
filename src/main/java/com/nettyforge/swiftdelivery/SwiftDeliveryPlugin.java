@@ -5,6 +5,7 @@ import com.nettyforge.swiftdelivery.command.DeliverCommand;
 import com.nettyforge.swiftdelivery.config.ConfigManager;
 import com.nettyforge.swiftdelivery.config.ConfigManagerImpl;
 import com.nettyforge.swiftdelivery.gui.DeliveryGUI;
+import com.nettyforge.swiftdelivery.gui.ProfileGUI;
 import com.nettyforge.swiftdelivery.placeholder.PlaceholderEngine;
 import com.nettyforge.swiftdelivery.placeholder.PlaceholderEngineImpl;
 import com.nettyforge.swiftdelivery.reward.PendingRewardStore;
@@ -13,7 +14,7 @@ import com.nettyforge.swiftdelivery.reward.RewardService;
 import com.nettyforge.swiftdelivery.reward.RewardServiceImpl;
 import com.nettyforge.swiftdelivery.service.CategoryService;
 import com.nettyforge.swiftdelivery.service.CategoryServiceImpl;
-import com.nettyforge.swiftdelivery.service.DataManager;
+import com.nettyforge.swiftdelivery.data.*;
 import com.nettyforge.swiftdelivery.service.DeliveryService;
 import com.nettyforge.swiftdelivery.service.DeliveryServiceImpl;
 import com.nettyforge.swiftdelivery.service.MessageService;
@@ -23,6 +24,10 @@ import com.nettyforge.swiftdelivery.service.SchedulerServiceImpl;
 import com.nettyforge.swiftdelivery.util.LoggingService;
 import com.nettyforge.swiftdelivery.webhook.WebhookService;
 import com.nettyforge.swiftdelivery.webhook.WebhookServiceImpl;
+import com.nettyforge.swiftdelivery.hook.item.*;
+import com.nettyforge.swiftdelivery.hook.economy.VaultHook;
+import com.nettyforge.swiftdelivery.hook.papi.SwiftDeliveryExpansion;
+import com.nettyforge.swiftdelivery.command.MailCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -37,6 +42,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.block.Chest;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.nettyforge.swiftdelivery.hook.AdventureHook;
 
 import java.io.File;
 import java.util.List;
@@ -61,10 +68,20 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
     private PendingRewardStore pendingRewardStore;
     private CommandHandler commandHandler;
     private DeliverCommand deliverCommand;
+    private MailCommand mailCommand;
+    
+    private AdventureHook adventureHook;
     private DeliveryGUI deliveryGUI;
+    private ProfileGUI profileGUI;
+    private VaultHook vaultHook;
     private ScheduledExecutorService executorService;
+    private ItemFactory itemFactory;
 
-    private DataManager dataManager;
+    public ItemFactory getItemFactory() {
+        return itemFactory;
+    }
+
+    private DatabaseManager databaseManager;
 
     private String currentLanguage = "tr";
     private String latestVersion = null; // GitHub'dan kontrol edilen son sürüm
@@ -76,7 +93,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
         getLogger().info("");
         getLogger().info("  SwiftDelivery v" + getDescription().getVersion());
-        getLogger().info("  Teslimat Etkinlik Sistemi");
+        getLogger().info("  Delivery Event System");
         getLogger().info("");
 
         try {
@@ -87,7 +104,9 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             saveDefaultConfigs();
             executorService = Executors.newScheduledThreadPool(2);
 
-            dataManager = new DataManager(this);
+            setupDatabase();
+            
+            this.adventureHook = new AdventureHook(this);
 
             initializeServices();
             loadConfigurations();
@@ -100,6 +119,11 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             long loadTime = System.currentTimeMillis() - startTime;
             getLogger().info("Successfully loaded! (" + loadTime + "ms)");
 
+            if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                new SwiftDeliveryExpansion(this, databaseManager).register();
+                getLogger().info("PlaceholderAPI hook enabled.");
+            }
+
             // GitHub'dan güncelleme kontrolü (async)
             checkForUpdates();
 
@@ -109,23 +133,54 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         }
     }
 
+    private void setupDatabase() {
+        File configFile = new File(getDataFolder(), "config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        String type = config.getString("database.type", "sqlite").toLowerCase();
+
+        if (type.equals("mysql")) {
+            String host = config.getString("database.mysql.host", "localhost");
+            int port = config.getInt("database.mysql.port", 3306);
+            String db = config.getString("database.mysql.database", "swiftdelivery");
+            String user = config.getString("database.mysql.username", "root");
+            String pass = config.getString("database.mysql.password", "");
+            boolean ssl = config.getBoolean("database.mysql.use-ssl", false);
+            int pool = config.getInt("database.mysql.pool-size", 10);
+            
+            databaseManager = new MySQLProvider(this, host, port, db, user, pass, ssl, pool);
+        } else {
+            databaseManager = new SQLiteProvider(this);
+        }
+
+        if (!databaseManager.connect()) {
+            getLogger().severe("Could not connect to the database! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
     @Override
     public void onDisable() {
-        getLogger().info("SwiftDelivery kapatiliyor...");
+        getLogger().info("SwiftDelivery is shutting down...");
 
-        if (deliveryService != null && dataManager != null) {
+        if (deliveryService != null && databaseManager != null) {
             var activeEvents = deliveryService.getAllActiveEvents();
             if (!activeEvents.isEmpty()) {
-                dataManager.saveAllActiveEvents(activeEvents);
+                for (var event : activeEvents) {
+                    databaseManager.saveActiveEvent(event).join(); // block on disable
+                }
             }
-            dataManager.saveDataSync();
+            databaseManager.disconnect();
         }
 
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
+        
+        if (adventureHook != null) {
+            adventureHook.disable();
+        }
 
-        getLogger().info("Kapatildi!");
+        getLogger().info("Shut down!");
     }
 
     private void saveDefaultConfigs() {
@@ -167,15 +222,26 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         new LoggingService(getLogger(), placeholderEngine);
         pendingRewardStore = new PendingRewardStoreImpl();
 
+        itemFactory = new ItemFactory(getLogger());
+        if (getServer().getPluginManager().getPlugin("Nexo") != null) {
+            itemFactory.registerProvider("NEXO", new NexoProvider(getLogger()));
+        }
+        if (getServer().getPluginManager().getPlugin("Oraxen") != null) {
+            itemFactory.registerProvider("ORAXEN", new OraxenProvider(getLogger()));
+        }
+        if (getServer().getPluginManager().getPlugin("ItemsAdder") != null) {
+            itemFactory.registerProvider("ITEMSADDER", new ItemsAdderProvider(getLogger()));
+        }
+
         SchedulerServiceImpl schedulerImpl = new SchedulerServiceImpl(executorService);
         schedulerImpl.setEventStartCallback(this::handleEventStart);
         schedulerImpl.setEventEndCallback(this::handleEventEnd);
         schedulerService = schedulerImpl;
 
-        webhookService = new WebhookServiceImpl(placeholderEngine);
+        webhookService = new WebhookServiceImpl(placeholderEngine, configManager);
         rewardService = new RewardServiceImpl(pendingRewardStore, placeholderEngine);
 
-        getLogger().info("Servisler hazir.");
+        getLogger().info("Services ready.");
     }
 
     private void handleEventStart(String deliveryName) {
@@ -186,15 +252,15 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 String delTR = deliveryGUI.getDeliveryDisplayName(deliveryName);
 
                 // Console log
-                getLogger().info("[EVENT STARTED] " + delTR + " | Kategori: " + catTR + " | Esya: " + itemTR);
+                getLogger().info("[EVENT STARTED] " + delTR + " | Category: " + catTR + " | Item: " + itemTR);
 
                 // Broadcast
-                String msg = "§e§lV§6elo§e§lD§6elivery §8» §a" + delTR + " §7basladi! §eIstenen: §f" + itemTR;
+                String msg = "§e§lS§6wift§e§lD§6elivery §8» §a" + delTR + " §7started! §eRequired: §f" + itemTR;
                 Bukkit.broadcastMessage(msg);
 
                 // Title
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle("§a§l" + delTR.toUpperCase(), "§7Istenen: §e" + itemTR, 10, 70, 20);
+                    p.sendTitle("§a§l" + delTR.toUpperCase(), "§7Required: §e" + itemTR, 10, 70, 20);
                     try {
                         p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     } catch (Exception ignored) {
@@ -219,19 +285,19 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             var winners = deliveryService.endEvent(deliveryName);
 
             // Console log
-            getLogger().info("[EVENT ENDED] " + delTR + " | Kazananlar: " + winners.size());
+            getLogger().info("[EVENT ENDED] " + delTR + " | Winners: " + winners.size());
 
             // Broadcast
-            String msg = "§e§lV§6elo§e§lD§6elivery §8» §c" + delTR + " §7ended!";
+            String msg = "§e§lS§6wift§e§lD§6elivery §8» §c" + delTR + " §7ended!";
             Bukkit.broadcastMessage(msg);
 
             if (!winners.isEmpty()) {
-                Bukkit.broadcastMessage("§e§lV§6elo§e§lD§6elivery §8» §6Kazananlar:");
+                Bukkit.broadcastMessage("§e§lS§6wift§e§lD§6elivery §8» §6Winners:");
                 int rank = 1;
                 for (var winner : winners) {
                     String color = rank == 1 ? "§6" : rank == 2 ? "§f" : rank == 3 ? "§c" : "§7";
                     Bukkit.broadcastMessage("  " + color + rank + ". §f" + winner.playerName() + " §8- §e"
-                            + winner.deliveryCount() + " §7teslimat");
+                            + winner.deliveryCount() + " §7deliveries");
                     rank++;
                     if (rank > 3)
                         break;
@@ -253,7 +319,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         try {
             File configFile = new File(getDataFolder(), "config.yml");
             if (!configFile.exists()) {
-                getLogger().warning("[WEBHOOK] config.yml bulunamadi: " + configFile.getAbsolutePath());
+                getLogger().warning("[WEBHOOK] config.yml not found: " + configFile.getAbsolutePath());
                 return;
             }
 
@@ -266,7 +332,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
             if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK")) {
                 getLogger().info(
-                        "[WEBHOOK-END] Atlanıyor: enabled=" + enabled + ", url_empty=" + (url == null || url.isEmpty())
+                        "[WEBHOOK-END] Skipping: enabled=" + enabled + ", url_empty=" + (url == null || url.isEmpty())
                                 + ", placeholder=" + (url != null && url.contains("YOUR_WEBHOOK")));
                 return;
             }
@@ -281,7 +347,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 for (var winner : winners) {
                     String medal = rank == 1 ? "🥇" : rank == 2 ? "🥈" : rank == 3 ? "🥉" : rank + ".";
                     winnersText.append("\\n").append(medal).append(" **").append(winner.playerName())
-                            .append("** - ").append(winner.deliveryCount()).append(" teslimat");
+                            .append("** - ").append(winner.deliveryCount()).append(" deliveries");
                     rank++;
                     if (rank > 5)
                         break;
@@ -290,7 +356,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 winnersText.append("\\n\\n*Kimse katılmadı*");
             }
 
-            String desc = "**Eşya:** " + itemTR + "\\n**Kategori:** " + categoryTR + winnersText;
+            String desc = "**Item:** " + itemTR + "\\n**Category:** " + categoryTR + winnersText;
             String json = "{\"embeds\":[{\"title\":\"🏆 " + delTR + " Bitti!\",\"description\":\"" + desc
                     + "\",\"color\":16766720,\"footer\":{\"text\":\"SwiftDelivery\"}}]}";
 
@@ -301,7 +367,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 sendWebhookRequest(finalUrl, finalJson, "END");
             });
         } catch (Exception e) {
-            getLogger().warning("[WEBHOOK] Hata: " + e.getMessage());
+            getLogger().warning("[WEBHOOK] Error: " + e.getMessage());
         }
     }
 
@@ -313,7 +379,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             // Global webhook URL'yi al
             File configFile = new File(getDataFolder(), "config.yml");
             if (!configFile.exists()) {
-                getLogger().warning("[WEBHOOK] config.yml bulunamadi: " + configFile.getAbsolutePath());
+                getLogger().warning("[WEBHOOK] config.yml not found: " + configFile.getAbsolutePath());
                 return;
             }
 
@@ -325,15 +391,15 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                     + (url != null ? url.substring(0, Math.min(url.length(), 30)) + "..." : "null"));
 
             if (!enabled || url == null || url.isEmpty() || url.contains("YOUR_WEBHOOK")) {
-                getLogger().info("[WEBHOOK-START] Atlanıyor: enabled=" + enabled + ", url_empty="
+                getLogger().info("[WEBHOOK-START] Skipping: enabled=" + enabled + ", url_empty="
                         + (url == null || url.isEmpty()) + ", placeholder="
                         + (url != null && url.contains("YOUR_WEBHOOK")));
                 return;
             }
 
             String delTR = deliveryGUI.getDeliveryDisplayName(deliveryName);
-            String title = "📦 " + delTR + " Başladı!";
-            String desc = "**Teslim Edilecek:** " + itemTR + "\\n**Kategori:** " + categoryTR;
+            String title = "📦 " + delTR + " Started!";
+            String desc = "**Required Item:** " + itemTR + "\\n**Category:** " + categoryTR;
 
             String json = "{\"embeds\":[{\"title\":\"" + title + "\",\"description\":\"" + desc
                     + "\",\"color\":65280,\"footer\":{\"text\":\"SwiftDelivery\"}}]}";
@@ -345,7 +411,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 sendWebhookRequest(finalUrl, finalJson, "START");
             });
         } catch (Exception e) {
-            getLogger().warning("[WEBHOOK] Hata: " + e.getMessage());
+            getLogger().warning("[WEBHOOK] Error: " + e.getMessage());
         }
     }
 
@@ -397,19 +463,21 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             int responseCode = connection.getResponseCode();
 
             if (responseCode == 200 || responseCode == 204 || responseCode == 201) {
-                getLogger().info("[WEBHOOK] Sent (" + tag + ")");
+                if (configManager != null && configManager.isDebug()) {
+                    getLogger().info("[WEBHOOK] Sent (" + tag + ")");
+                }
             } else {
-                getLogger().warning("[WEBHOOK] Hata: " + responseCode);
+                getLogger().warning("[WEBHOOK] Error: " + responseCode);
             }
 
             connection.disconnect();
 
         } catch (java.net.SocketTimeoutException e) {
-            getLogger().warning("[WEBHOOK] Timeout - Discord'a ulasilamiyor");
+            getLogger().warning("[WEBHOOK] Timeout - Cannot reach Discord");
         } catch (java.io.IOException e) {
             getLogger().warning("[WEBHOOK] Connection error: " + e.getMessage());
         } catch (Exception e) {
-            getLogger().warning("[WEBHOOK] Hata: " + e.getMessage());
+            getLogger().warning("[WEBHOOK] Error: " + e.getMessage());
         }
     }
 
@@ -441,11 +509,11 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 if (!currentLanguage.equals("tr") && !currentLanguage.equals("en")) {
                     currentLanguage = "tr";
                 }
-                getLogger().info("Dil ayari: " + currentLanguage);
+                getLogger().info("Language setting: " + currentLanguage);
             }
         } catch (Exception e) {
             currentLanguage = "tr";
-            getLogger().warning("Dil ayari yuklenemedi, varsayilan: tr");
+            getLogger().warning("Language setting could not be loaded, default: en");
         }
     }
 
@@ -476,15 +544,21 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 this::sendMessageToPlayer,
                 getLogger());
 
-        deliveryGUI = new DeliveryGUI(configManager, deliveryService);
+        deliveryGUI = new DeliveryGUI(configManager, deliveryService, itemFactory);
         deliveryGUI.setLanguageSupplier(this::getCurrentLanguage);
         deliveryGUI.setDataFolder(getDataFolder());
         loadGUISettings();
 
+        profileGUI = new ProfileGUI(databaseManager);
+        vaultHook = new VaultHook();
+
         deliverCommand = new DeliverCommand(
                 this::checkPermission,
                 this::sendMessageToPlayer,
-                deliveryGUI);
+                deliveryGUI,
+                profileGUI);
+
+        mailCommand = new MailCommand(this, databaseManager, vaultHook);
 
         commandHandler.setDeliveryService(deliveryService);
         commandHandler.setReloadCallback(this::reloadAllSettings);
@@ -502,7 +576,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             if (deliveryService.getActiveEvent(deliveryName).isPresent()) {
                 handleEventEnd(deliveryName);
-                getLogger().info("[SwiftDelivery] Manuel etkinlik süresi doldu: " + deliveryName);
+                getLogger().info("[SwiftDelivery] Manual event expired: " + deliveryName);
             }
         }, ticks);
     }
@@ -514,23 +588,23 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         try {
             File configFile = new File(getDataFolder(), "config.yml");
             if (!configFile.exists()) {
-                getLogger().warning("[WEBHOOK TEST] config.yml bulunamadi!");
+                getLogger().warning("[WEBHOOK TEST] config.yml not found!");
                 return;
             }
 
             var config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
             String url = config.getString("webhook.url", "");
 
-            getLogger().info("[WEBHOOK TEST] URL uzunluk: " + url.length());
+            getLogger().info("[WEBHOOK TEST] URL length: " + url.length());
 
             if (url.isEmpty() || url.contains("YOUR_WEBHOOK")) {
-                getLogger().warning("[WEBHOOK TEST] Webhook URL ayarlanmamis!");
+                getLogger().warning("[WEBHOOK TEST] Webhook URL is not set!");
                 return;
             }
 
             String json = "{\"embeds\":[{\"title\":\"🧪 SwiftDelivery Test\",\"description\":\"Webhook baglantisi basarili!\\n\\nBu bir test mesajidir.\",\"color\":65280,\"footer\":{\"text\":\"SwiftDelivery v1.0.0\"}}]}";
 
-            getLogger().info("[WEBHOOK TEST] Gonderiliyor...");
+            getLogger().info("[WEBHOOK TEST] Sending...");
 
             final String finalUrl = url;
             final String finalJson = json;
@@ -538,7 +612,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 sendWebhookRequest(finalUrl, finalJson, "TEST");
             });
         } catch (Exception e) {
-            getLogger().warning("[WEBHOOK TEST] Hata: " + e.getMessage());
+            getLogger().warning("[WEBHOOK TEST] Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -640,7 +714,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         // GUI ayarlarını yeniden yükle
         loadGUISettings();
 
-        getLogger().info("Tum ayarlar yeniden yuklendi. Dil: " + currentLanguage);
+        getLogger().info("All settings reloaded. Language: " + currentLanguage);
     }
 
     private void loadGUISettings() {
@@ -672,13 +746,16 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 }
             }
         } catch (Exception e) {
-            getLogger().warning("GUI ayarlari yuklenemedi: " + e.getMessage());
+            getLogger().warning("GUI settings could not be loaded: " + e.getMessage());
         }
     }
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(profileGUI, this);
     }
+
+
 
     private void resumeActiveEvents() {
         if (schedulerService != null) {
@@ -688,7 +765,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         if (configManager != null && configManager.getDeliveryConfig() != null) {
             var enabledDeliveries = configManager.getDeliveryConfig().getEnabledDeliveries();
             if (!enabledDeliveries.isEmpty()) {
-                getLogger().info("Zamanlanmis teslimatlar:");
+                getLogger().info("Scheduled deliveries:");
                 enabledDeliveries.forEach(delivery -> {
                     try {
                         schedulerService.scheduleEvent(delivery);
@@ -705,35 +782,36 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
      * Sunucu kapanmadan önce kaydedilmiş aktif etkinlikleri yükler.
      */
     private void loadSavedEvents() {
-        if (dataManager == null || deliveryService == null)
+        if (databaseManager == null || deliveryService == null)
             return;
 
-        var savedEvents = dataManager.loadActiveEvents();
-        if (savedEvents.isEmpty())
-            return;
+        getLogger().info("Saved events loading...");
 
-        getLogger().info("Kaydedilmis etkinlikler loading...");
+        databaseManager.loadAllActiveEvents().thenAccept(savedEvents -> {
+            if (savedEvents.isEmpty()) return;
 
-        for (var savedData : savedEvents) {
-            try {
-                // Etkinlik hala geçerli mi kontrol et (bitiş zamanı geçmemiş mi)
-                if (savedData.endTime() != null && savedData.endTime().isBefore(java.time.ZonedDateTime.now())) {
-                    getLogger().info("  - " + savedData.deliveryName() + " (expired, atlanıyor)");
-                    dataManager.removeActiveEvent(savedData.deliveryName());
-                    continue;
+            Bukkit.getScheduler().runTask(this, () -> {
+                for (var savedEvent : savedEvents) {
+                    try {
+                        // Etkinlik hala geçerli mi kontrol et (bitiş zamanı geçmemiş mi)
+                        if (savedEvent.getEndTime() != null && savedEvent.getEndTime().isBefore(java.time.ZonedDateTime.now())) {
+                            getLogger().info("  - " + savedEvent.getDeliveryName() + " (expired, skipping)");
+                            databaseManager.deleteActiveEvent(savedEvent.getDeliveryName());
+                            continue;
+                        }
+
+                        // Restore to service
+                        ((DeliveryServiceImpl) deliveryService).restoreEvent(savedEvent);
+
+                        getLogger().info("  + " + savedEvent.getDeliveryName() + " (loaded, " +
+                                savedEvent.getPlayerDeliveries().size() + " player data)");
+
+                    } catch (Exception e) {
+                        getLogger().warning("  x " + savedEvent.getDeliveryName() + ": " + e.getMessage());
+                    }
                 }
-
-                // ActiveEvent oluştur ve servise ekle
-                var activeEvent = savedData.toActiveEvent();
-                ((DeliveryServiceImpl) deliveryService).restoreEvent(activeEvent);
-
-                getLogger().info("  + " + savedData.deliveryName() + " (yuklendi, " +
-                        savedData.playerDeliveries().size() + " oyuncu verisi)");
-
-            } catch (Exception e) {
-                getLogger().warning("  x " + savedData.deliveryName() + ": " + e.getMessage());
-            }
-        }
+            });
+        });
     }
 
     @EventHandler
@@ -746,14 +824,33 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             }, 20L);
         }
 
+        if (databaseManager != null && player.hasPermission("swiftdelivery.mail")) {
+            databaseManager.getMail(player.getUniqueId()).thenAccept(mails -> {
+                long unread = mails.stream().filter(m -> !m.claimed()).count();
+                if (unread > 0) {
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §aYou have §f" + unread + " §aunread mail(s)!");
+                        player.sendMessage("§7Type §e/delivery profile §7to open your inbox.");
+                        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+                    }, 40L);
+                }
+            }).exceptionally(ex -> {
+                getLogger().warning("Failed to load mail for " + player.getName() + ": " + ex.getMessage());
+                return null;
+            });
+        }
+
         // Güncelleme bildirimi (sadece OP oyuncular)
-        if (updateAvailable && latestVersion != null && player.isOp()) {
+        if (updateAvailable && latestVersion != null && (player.isOp() || player.hasPermission("swiftdelivery.admin"))) {
             Bukkit.getScheduler().runTaskLater(this, () -> {
                 player.sendMessage("");
-                player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §aYeni sürüm mevcut!");
-                player.sendMessage(
-                        "§7  Mevcut: §cv" + getDescription().getVersion() + " §8» §7Yeni: §av" + latestVersion);
-                player.sendMessage("§7  §ehttps://github.com/musbabaff/SwiftDelivery/releases");
+                player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §aNew version available!");
+                player.sendMessage("§7  Current: §cv" + getDescription().getVersion() + " §8» §7New: §av" + latestVersion);
+                
+                net.md_5.bungee.api.chat.TextComponent link = new net.md_5.bungee.api.chat.TextComponent("§7  §b§nClick here to download.");
+                link.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.OPEN_URL, "https://github.com/musbabaff/SwiftDelivery/releases"));
+                player.spigot().sendMessage(link);
+                
                 player.sendMessage("");
             }, 60L); // 3 saniye sonra göster
         }
@@ -802,7 +899,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         // ASkyBlock vb.)
         org.bukkit.block.Block block = event.getClickedBlock();
         if (!canAccessChest(player, block)) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cBu sandığa erişim izniniz yok!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cYou do not have permission to access this chest!");
             deliveryGUI.cancelChestSelection(player.getUniqueId());
             return;
         }
@@ -822,7 +919,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         }
 
         if (chestInventory == null) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cBu bir sandık değil!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cThis is not a chest!");
             return;
         }
 
@@ -833,7 +930,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
         var activeEvent = deliveryService.getActiveEvent(deliveryName).orElse(null);
         if (activeEvent == null) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cTeslimat artık aktif değil!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cDelivery is no longer active!");
             return;
         }
 
@@ -875,7 +972,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             }
         } catch (Exception e) {
             // Hata durumunda izin ver
-            getLogger().warning("Koruma kontrolü hatası: " + e.getMessage());
+            getLogger().warning("Protection check error: " + e.getMessage());
         }
 
         return true;
@@ -952,7 +1049,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
         // Bekleyen teslimatlar - satır 2 (slot 18-26)
         if (slot >= 18 && slot <= 26) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §7Bu teslimat henüz başlamadı!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §7This delivery has not started yet!");
         }
     }
 
@@ -967,7 +1064,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
                 .orElse(null);
 
         if (activeEvent == null) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cTeslimat artik aktif degil!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cDelivery is no longer active!");
             deliveryGUI.openMainMenu(player);
             return;
         }
@@ -983,7 +1080,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         if (slot == 24) {
             player.closeInventory();
             deliveryGUI.startChestSelection(player, activeEvent.getDeliveryName());
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §aBir sandığa sağ tıkla! §7(10 saniye)");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §aRight-click a chest! §7(10 seconds)");
             return;
         }
 
@@ -1005,7 +1102,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         try {
             material = org.bukkit.Material.valueOf(requiredItem.toUpperCase());
         } catch (Exception e) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cGeçersiz eşya: §f" + requiredItem);
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cInvalid item: §f" + requiredItem);
             return;
         }
 
@@ -1018,7 +1115,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
         if (count == 0) {
             String itemName = deliveryGUI.getItemDisplayName(requiredItem);
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cEnvanterinde §e" + itemName + " §cyok!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cYou don't have §e" + itemName + " §cin inventory!");
             return;
         }
 
@@ -1042,10 +1139,9 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         int delivered = count - remaining;
         deliveryService.recordDelivery(player.getUniqueId(), activeEvent.getDeliveryName(), delivered);
 
-        // Veriyi kaydet ve oyuncu ismini cache'le
-        if (dataManager != null) {
-            dataManager.saveActiveEvent(activeEvent);
-            dataManager.updatePlayerStats(player.getUniqueId(), player.getName(), delivered);
+        // Veriyi senkronize et ve oyuncu ismini cache'le
+        if (databaseManager != null) {
+            databaseManager.saveActiveEvent(activeEvent);
         }
         deliveryGUI.cachePlayerName(player.getUniqueId(), player.getName());
 
@@ -1053,10 +1149,10 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         int rank = calculateRank(activeEvent, player.getUniqueId());
         String itemName = deliveryGUI.getItemDisplayName(requiredItem);
 
-        player.sendTitle("§a§lTESLİM EDİLDİ!", "§e" + delivered + " §7adet §f" + itemName, 10, 50, 10);
+        player.sendTitle("§a§lDELIVERED!", "§e" + delivered + " §7amount §f" + itemName, 10, 50, 10);
         player.sendMessage(
-                "§e§lV§6elo§e§lD§6elivery §8» §a" + delivered + " §7adet §e" + itemName + " §7teslim edildi!");
-        player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §7Toplam: §f" + total + " §8| §7Sıra: §e#" + rank);
+                "§e§lS§6wift§e§lD§6elivery §8» §a" + delivered + " §7amount §e" + itemName + " §7delivered!");
+        player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §7Total: §f" + total + " §8| §7Rank: §e#" + rank);
 
         try {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
@@ -1071,7 +1167,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         try {
             material = org.bukkit.Material.valueOf(requiredItem.toUpperCase());
         } catch (Exception e) {
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cGeçersiz eşya: §f" + requiredItem);
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cInvalid item: §f" + requiredItem);
             return;
         }
 
@@ -1086,7 +1182,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
         if (count == 0) {
             String itemName = deliveryGUI.getItemDisplayName(requiredItem);
-            player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §cSandıkta §e" + itemName + " §cyok!");
+            player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §cChest does not contain §e" + itemName + " §cin inventory!");
             return;
         }
 
@@ -1110,10 +1206,9 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         int delivered = count - remaining;
         deliveryService.recordDelivery(player.getUniqueId(), activeEvent.getDeliveryName(), delivered);
 
-        // Veriyi kaydet ve oyuncu ismini cache'le
-        if (dataManager != null) {
-            dataManager.saveActiveEvent(activeEvent);
-            dataManager.updatePlayerStats(player.getUniqueId(), player.getName(), delivered);
+        // Veriyi senkronize et ve oyuncu ismini cache'le
+        if (databaseManager != null) {
+            databaseManager.saveActiveEvent(activeEvent);
         }
         deliveryGUI.cachePlayerName(player.getUniqueId(), player.getName());
 
@@ -1121,10 +1216,10 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
         int rank = calculateRank(activeEvent, player.getUniqueId());
         String itemName = deliveryGUI.getItemDisplayName(requiredItem);
 
-        player.sendTitle("§a§lTESLİM EDİLDİ!", "§e" + delivered + " §7adet §f" + itemName, 10, 50, 10);
-        player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §a" + delivered + " §7adet §e" + itemName
-                + " §7sandıktan teslim edildi!");
-        player.sendMessage("§e§lV§6elo§e§lD§6elivery §8» §7Toplam: §f" + total + " §8| §7Sıra: §e#" + rank);
+        player.sendTitle("§a§lDELIVERED!", "§e" + delivered + " §7amount §f" + itemName, 10, 50, 10);
+        player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §a" + delivered + " §7amount §e" + itemName
+                + " §7delivered from chest!");
+        player.sendMessage("§e§lS§6wift§e§lD§6elivery §8» §7Total: §f" + total + " §8| §7Rank: §e#" + rank);
 
         try {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
@@ -1221,18 +1316,19 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             case "SwiftDelivery" -> commandHandler.handleCommand(senderName, args);
             case "delivery" -> {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage("§cBu komut sadece oyuncular kullanabilir.");
+                    sender.sendMessage("§cThis command can only be used by players.");
                     yield true;
                 }
                 yield deliverCommand.handleTeslimatCommand(senderName, senderUuid, args);
             }
             case "deliver" -> {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage("§cBu komut sadece oyuncular kullanabilir.");
+                    sender.sendMessage("§cThis command can only be used by players.");
                     yield true;
                 }
                 yield deliverCommand.handleTeslimCommand(senderName, senderUuid, args);
             }
+            case "swiftmail" -> mailCommand.onCommand(sender, command, label, args);
             default -> false;
         };
     }
@@ -1246,6 +1342,7 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
             case "SwiftDelivery" -> commandHandler.handleTabComplete(senderName, args);
             case "delivery" -> deliverCommand.handleTeslimatTabComplete(senderName, args);
             case "deliver" -> deliverCommand.handleTeslimTabComplete(senderName, args);
+            case "swiftmail" -> null; // let Bukkit handle player name autocomplete
             default -> List.of();
         };
     }
@@ -1260,12 +1357,48 @@ public class SwiftDeliveryPlugin extends JavaPlugin implements Listener {
 
     private void sendMessageToPlayer(String playerName, String message) {
         if ("CONSOLE".equals(playerName)) {
-            getLogger().info(message);
+            getLogger().info(message); // Console can stay legacy or plain
             return;
         }
         Player player = Bukkit.getPlayer(playerName);
-        if (player != null && player.isOnline()) {
+        if (player != null && player.isOnline() && adventureHook != null) {
+            adventureHook.sendMessage(player, message);
+        } else if (player != null && player.isOnline()) { // fallback
             player.sendMessage(message);
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onDeliveryDeliver(com.nettyforge.swiftdelivery.event.DeliveryDeliverEvent event) {
+        if (event.isCancelled() || databaseManager == null) return;
+        
+        Player player = event.getPlayer();
+        int amount = event.getAmount();
+        
+        // 1 XP per item delivered
+        databaseManager.addCourierXp(player.getUniqueId(), amount);
+        
+        String summary = amount + "x " + event.getItemType() + " to " + event.getDeliveryName();
+        // Server receives it, so receiver is represented as a zero UUID
+        UUID serverUuid = new UUID(0, 0); 
+        databaseManager.logTransaction(UUID.randomUUID().toString(), player.getUniqueId(), serverUuid, summary, "DELIVERY_EVENT");
+
+        // Cosmetics
+        org.bukkit.configuration.file.FileConfiguration config = getConfig();
+        String soundName = config.getString("events.cosmetics.delivery-sound", "ENTITY_PLAYER_LEVELUP");
+        String particleName = config.getString("events.cosmetics.delivery-particle", "VILLAGER_HAPPY");
+        String actionBar = config.getString("events.cosmetics.delivery-action-bar", "<green><bold>SUCCESS!</bold></green> <gray>Item Delivered.</gray>");
+
+        try {
+            player.playSound(player.getLocation(), org.bukkit.Sound.valueOf(soundName), 1.0f, 1.0f);
+        } catch (Exception ignored) {}
+
+        try {
+            player.spawnParticle(org.bukkit.Particle.valueOf(particleName), player.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0.1);
+        } catch (Exception ignored) {}
+
+        if (adventureHook != null) {
+            adventureHook.sendActionBar(player, actionBar);
         }
     }
 
