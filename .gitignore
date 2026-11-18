@@ -61,3 +61,6 @@ usercache.json
 migrate*.ps1
 translate*.ps1
 fixrefs*.ps1
+
+# Local compiler output
+compile_errors.txt
